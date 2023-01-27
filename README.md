@@ -196,7 +196,7 @@ jobs:
 
 **[Optional]** Set GitHub action to wait for pipeline completion 
 
-The default setting is for GitHub actions to               wait until a pipeline runs to completion. If you want GitHub actions to launch the workflow and then finish you can set the wait to false:
+The default setting is for GitHub actions to wait until a pipeline runs to completion. If you want GitHub actions to launch the workflow and then finish you can set the wait to false:
 
 ```yaml
 jobs:
