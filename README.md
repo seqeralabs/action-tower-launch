@@ -192,6 +192,22 @@ jobs:
           # Truncated..
 ```
 
+### `wait`
+
+**[Optional]** Set GitHub action to wait for pipeline completion 
+
+The default setting is for GitHub actions to               wait until a pipeline runs to completion. If you want GitHub actions to launch the workflow and then finish you can set the wait to false:
+
+```yaml
+jobs:
+  run-tower:
+    steps:
+      - uses: nf-core/tower-action@v2
+        with:
+          wait: false
+          # Truncated..
+```
+
 ## Outputs
 
 The action prints normal stdout info-level log messages to the actions console. However, it saves a verbose log file to `tower_action_*.log` (the `*` is a timestamp). We recommend using [`actions/upload-artifact`](https://github.com/actions/upload-artifact) in your GitHub Actions workflow as shown in the examples above, this will then expose this file as a download through the workflow summary page.
