@@ -61,6 +61,7 @@ jobs:
           compute_env: ${{ secrets.TOWER_COMPUTE_ENV }}
           pipeline: YOUR_USERNAME/REPO
           revision: v1.2.1
+          run_name: ${{ github.job }}_${{ github.run_attempt }}
           workdir: ${{ secrets.AWS_S3_BUCKET }}/work/${{ github.sha }}
           # Set any custom pipeline params here - JSON object as a string
           parameters: |
@@ -157,6 +158,12 @@ These should be supplied as a valid JSON object, quoted as a string in your GitH
 **[Optional]** Nextflow config profiles.
 
 Pipeline config profiles to use. Should be comma separated without spaces.
+
+### `run_name`
+
+**[Optional]** Nextflow Tower run name
+
+Provide a name for the run in Nextflow Tower.
 
 ### `nextflow_config`
 
