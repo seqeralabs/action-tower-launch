@@ -1,4 +1,4 @@
-# ![nf-core/tower-action](img/nfcore-toweraction_logo.png)
+# seqeralabs/tower-action
 
 **A GitHub Action to launch a workflow using [Nextflow Tower](https://tower.nf) - <https://tower.nf>.**
 
@@ -8,7 +8,7 @@ This action uses the [Nextflow Tower CLI](https://github.com/seqeralabs/tower-cl
 
 ### Minimal example
 
-This runs the current GitHub repository pieline on [Nextflow Tower](https://tower.nf) at the current commit hash when pushed to the `dev` branch. The workflow runs on the user's personal workspace.
+This runs the current GitHub repository pipeline on [Nextflow Tower](https://tower.nf) at the current commit hash when pushed to the `dev` branch. The workflow runs on the user's personal workspace.
 
 ```yaml
 on:
@@ -19,7 +19,7 @@ jobs:
   run-tower:
     runs-on: ubuntu-latest
     steps:
-      - uses: nf-core/tower-action@v2
+      - uses: seqeralabs/tower-action@v2
         # Use repository secrets for sensitive fields
         with:
           access_token: ${{ secrets.TOWER_ACCESS_TOKEN }}
@@ -52,7 +52,7 @@ jobs:
     if: github.repository == 'YOUR_USERNAME/REPO'
     runs-on: ubuntu-latest
     steps:
-      - uses: nf-core/tower-action@v2
+      - uses: seqeralabs/tower-action@v2
         # Use repository secrets for sensitive fields
         with:
           workspace_id: ${{ secrets.TOWER_WORKSPACE_ID }}
@@ -168,7 +168,7 @@ Useful to pass custom Nextflow config options to the `tw launch` command e.g.
 jobs:
   run-tower:
     steps:
-      - uses: nf-core/tower-action@v2
+      - uses: seqeralabs/tower-action@v2
         with:
           nextflow_config: |
             process.errorStrategy = 'retry'
@@ -186,7 +186,7 @@ Pre-run script executed before pipeline launch. This would be particularly usefu
 jobs:
   run-tower:
     steps:
-      - uses: nf-core/tower-action@v2
+      - uses: seqeralabs/tower-action@v2
         with:
           pre_run_script: 'export NXF_VER=21.10.3'
           # Truncated..
@@ -199,13 +199,3 @@ The action prints normal stdout info-level log messages to the actions console. 
 ## Credits
 
 This GitHub Action was written by Phil Ewels ([@ewels](https://github.com/ewels)), with help from and based on earlier work by Gisela Gabernet ([@ggabernet](https://github.com/ggabernet)).
-
-## Citation
-
-If you use `nf-core/tower-action` in your work, please cite the `nf-core` publication as follows:
-
-> **The nf-core framework for community-curated bioinformatics pipelines.**
->
-> Philip Ewels, Alexander Peltzer, Sven Fillinger, Harshil Patel, Johannes Alneberg, Andreas Wilm, Maxime Ulysse Garcia, Paolo Di Tommaso & Sven Nahnsen.
->
-> _Nat Biotechnol._ 2020 Feb 13. doi: [10.1038/s41587-020-0439-x](https://dx.doi.org/10.1038/s41587-020-0439-x).
