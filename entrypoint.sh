@@ -20,6 +20,9 @@ echo -e "$PRE_RUN_SCRIPT" > pre_run.sh
 # Print the nextflow config  to a file
 echo -e "$NEXTFLOW_CONFIG" > nextflow.config
 
+# If wait is set to false then unset wait to disable waiting
+if [ "$WAIT" = false ]; then unset WAIT; fi
+
 # Launch the pipeline
 tw -v \
     launch \
@@ -29,8 +32,10 @@ tw -v \
     ${TOWER_COMPUTE_ENV:+"--compute-env=$TOWER_COMPUTE_ENV"} \
     ${REVISION:+"--revision=$REVISION"} \
     ${CONFIG_PROFILES:+"--profile=$CONFIG_PROFILES"} \
+    ${RUN_NAME:+"--name=$RUN_NAME"} \
     ${PRE_RUN_SCRIPT:+"--pre-run=pre_run.sh"} \
     ${NEXTFLOW_CONFIG:+"--config=nextflow.config"} \
+    ${WAIT:+"--wait=$WAIT"} \
     2>> $LOG_FN | tee -a $LOG_FN
 
 # Strip secrets from the log file
