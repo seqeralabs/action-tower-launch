@@ -4,6 +4,8 @@
 
 This action uses the [Nextflow Tower CLI](https://github.com/seqeralabs/tower-cli/).
 
+Contributed with ❤️ from the [@nf-core](https://github.com/nf-core/) community.
+
 ## Example usage
 
 ### Minimal example
