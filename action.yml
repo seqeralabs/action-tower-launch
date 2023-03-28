@@ -1,4 +1,4 @@
-name: tower-action
+name: action-tower-launch
 author: Phil Ewels
 
 description: Launch a workflow using Nextflow Tower (https://tower.nf)
