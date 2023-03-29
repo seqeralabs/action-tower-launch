@@ -49,7 +49,7 @@ inputs:
     required: false
   wait:
     description: Set GitHub action to wait for pipeline completion 
-    default: SUCCEEDED
+    default: false
     required: false
 
 runs:
