@@ -32,7 +32,7 @@ tw -v \
     ${TOWER_COMPUTE_ENV:+"--compute-env=$TOWER_COMPUTE_ENV"} \
     ${REVISION:+"--revision=$REVISION"} \
     ${CONFIG_PROFILES:+"--profile=$CONFIG_PROFILES"} \
-    ${RUN_NAME:+"--name=$RUN_NAME"} \
+    ${RUN_NAME:+"--name=${RUN_NAME/:/_}"} \
     ${PRE_RUN_SCRIPT:+"--pre-run=pre_run.sh"} \
     ${NEXTFLOW_CONFIG:+"--config=nextflow.config"} \
     ${WAIT:+"--wait=$WAIT"} \
