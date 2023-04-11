@@ -1,4 +1,5 @@
 #!/bin/sh
+set -euxo pipefail
 
 # Use `tee` to print just stdout to the console but save stdout + stderr to a file
 LOG_FN="tower_action_"$(date +'%Y_%m_%d-%H_%M')".log"
