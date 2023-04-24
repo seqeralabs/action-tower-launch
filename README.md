@@ -219,6 +219,8 @@ jobs:
 
 ## Outputs
 
+### Output variables
+
 The action creates the output variable `json` which is a JSON string of metadata created by the Tower API. It looks like this:
 
 ```
@@ -238,6 +240,8 @@ inputs:
   json: ${{ fromJSON( steps.tower-action.outputs.json) }}
 # Becomes an object which can be used, e.g. ${{ inputs.json.workflowId }}
 ```
+
+### Logs
 
 The action prints normal stdout info-level log messages to the actions console. However, it saves a verbose log file to `tower_action_*.log` (the `*` is a timestamp). We recommend using [`actions/upload-artifact`](https://github.com/actions/upload-artifact) in your GitHub Actions workflow as shown in the examples above, this will then expose this file as a download through the workflow summary page.
 
