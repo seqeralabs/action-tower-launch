@@ -197,13 +197,13 @@ jobs:
     steps:
       - uses: seqeralabs/action-tower-launch@v1
         with:
-          pre_run_script: 'export NXF_VER=21.10.3'
+          pre_run_script: "export NXF_VER=21.10.3"
           # Truncated..
 ```
 
 ### `wait`
 
-**[Optional]** Set GitHub action to wait for pipeline completion 
+**[Optional]** Set GitHub action to wait for pipeline completion
 
 The default setting is for GitHub actions to wait until a pipeline runs to completion. If you want GitHub actions to launch the workflow and then finish you can set the wait to false:
 
@@ -218,6 +218,17 @@ jobs:
 ```
 
 ## Outputs
+
+The action writes the output variable `json` which is a JSON string of metadata created by the Tower API. It looks like this:
+
+```
+{
+  "workflowId" : "7f061c344df044",
+  "workflowUrl" : "https://tower.nf/orgs/myorg/workspaces/myworkspace/watch/7f061c344df044",
+  "workspaceId" : 123456789,
+  "workspaceRef" : "[myorg / myworkspace]"
+}
+```
 
 The action prints normal stdout info-level log messages to the actions console. However, it saves a verbose log file to `tower_action_*.log` (the `*` is a timestamp). We recommend using [`actions/upload-artifact`](https://github.com/actions/upload-artifact) in your GitHub Actions workflow as shown in the examples above, this will then expose this file as a download through the workflow summary page.
 

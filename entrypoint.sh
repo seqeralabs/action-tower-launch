@@ -25,7 +25,7 @@ echo -e "$NEXTFLOW_CONFIG" > nextflow.config
 if [ "$WAIT" = false ]; then unset WAIT; fi
 
 # Launch the pipeline
-tw -v \
+export OUT=$(tw -v \
     launch \
     $PIPELINE \
     --params-file=params.json \
@@ -37,7 +37,8 @@ tw -v \
     ${PRE_RUN_SCRIPT:+"--pre-run=pre_run.sh"} \
     ${NEXTFLOW_CONFIG:+"--config=nextflow.config"} \
     ${WAIT:+"--wait=$WAIT"} \
-    2>> $LOG_FN | tee -a $LOG_FN
+    2>> $LOG_FN | tee -a $LOG_FN)
 
 # Strip secrets from the log file
 sed -i "s/$TOWER_ACCESS_TOKEN/xxxxxx/" $LOG_FN
+echo "json=$OUT" >> $GITHUB_OUTPUT

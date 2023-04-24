@@ -4,8 +4,8 @@ author: Phil Ewels
 description: Launch a workflow using Nextflow Tower (https://tower.nf)
 
 branding:
-  icon: 'play'
-  color: 'purple'
+  icon: "play"
+  color: "purple"
 
 inputs:
   access_token:
@@ -48,12 +48,12 @@ inputs:
     description: Pre-run script before launch
     required: false
   wait:
-    description: Set GitHub action to wait for pipeline completion 
+    description: Set GitHub action to wait for pipeline completion
     default: false
     required: false
 
 runs:
-  using: 'docker'
+  using: "docker"
   image: Dockerfile
   env:
     TOWER_WORKSPACE_ID: ${{ inputs.workspace_id }}
@@ -69,3 +69,6 @@ runs:
     NEXTFLOW_CONFIG: ${{ inputs.nextflow_config }}
     PRE_RUN_SCRIPT: ${{ inputs.pre_run_script }}
     WAIT: ${{ inputs.wait }}
+  outputs:
+    json:
+      description: JSON from tw launch with workflowID, workflowUrl, workspaceId, workspaceRef
