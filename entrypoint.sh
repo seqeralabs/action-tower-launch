@@ -25,7 +25,7 @@ echo -e "$NEXTFLOW_CONFIG" > nextflow.config
 if [ "$WAIT" = false ]; then unset WAIT; fi
 
 # Launch the pipeline
-export OUT=$(tw -v \
+export OUT=$(tw -o json -v \
     launch \
     $PIPELINE \
     --params-file=params.json \
