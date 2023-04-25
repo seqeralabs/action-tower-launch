@@ -45,4 +45,4 @@ echo "workflowId=$(echo $OUT | jq '.workflowId')" >> $GITHUB_OUTPUT
 echo "workflowUrl=$(echo $OUT | jq '.workflowUrl')" >> $GITHUB_OUTPUT
 echo "workspaceId=$(echo $OUT | jq '.workspaceId')" >> $GITHUB_OUTPUT
 echo "workspaceRef=$(echo $OUT | jq '.workspaceRef')" >> $GITHUB_OUTPUT
-echo "json=$(echo $OUT | jq -Rc) >> $GITHUB_OUTPUT
+echo "json=$(echo $OUT | jq -c) >> $GITHUB_OUTPUT
