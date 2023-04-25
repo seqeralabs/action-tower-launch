@@ -41,8 +41,8 @@ export OUT=$(tw -o json -v \
 
 # Strip secrets from the log file
 sed -i "s/$TOWER_ACCESS_TOKEN/xxxxxx/" $LOG_FN
-echo "workflowId=$(echo $OUT | jq '.workflowId')" >> $GITHUB_OUTPUT
-echo "workflowUrl=$(echo $OUT | jq '.workflowUrl')" >> $GITHUB_OUTPUT
-echo "workspaceId=$(echo $OUT | jq '.workspaceId')" >> $GITHUB_OUTPUT
-echo "workspaceRef=$(echo $OUT | jq '.workspaceRef')" >> $GITHUB_OUTPUT
-echo "json=$(echo $OUT | jq -c) >> $GITHUB_OUTPUT
+echo workflowId=$(echo $OUT | jq '.workflowId') >> $GITHUB_OUTPUT
+echo workflowUrl=$(echo $OUT | jq '.workflowUrl') >> $GITHUB_OUTPUT
+echo workspaceId=$(echo $OUT | jq '.workspaceId') >> $GITHUB_OUTPUT
+echo workspaceRef=$(echo $OUT | jq '.workspaceRef') >> $GITHUB_OUTPUT
+echo json=$OUT >> $GITHUB_OUTPUT
