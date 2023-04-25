@@ -37,8 +37,8 @@ export OUT=$(tw -o json -v \
     ${PRE_RUN_SCRIPT:+"--pre-run=pre_run.sh"} \
     ${NEXTFLOW_CONFIG:+"--config=nextflow.config"} \
     ${WAIT:+"--wait=$WAIT"} \
-    2>> $LOG_FN | tee -a $LOG_FN)
+    2>> $LOG_FN | tee -a $LOG_FN | jq -rc)
 
 # Strip secrets from the log file
 sed -i "s/$TOWER_ACCESS_TOKEN/xxxxxx/" $LOG_FN
-echo "json=$OUT" >> $GITHUB_OUTPUT
+echo "json=\"$OUT\"" >> $GITHUB_OUTPUT
