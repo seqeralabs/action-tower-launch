@@ -69,6 +69,7 @@ runs:
     NEXTFLOW_CONFIG: ${{ inputs.nextflow_config }}
     PRE_RUN_SCRIPT: ${{ inputs.pre_run_script }}
     WAIT: ${{ inputs.wait }}
-  outputs:
-    json:
-      description: JSON from tw launch with workflowID, workflowUrl, workspaceId, workspaceRef
+
+outputs:
+  json:
+    description: JSON from tw launch with workflowID, workflowUrl, workspaceId, workspaceRef
