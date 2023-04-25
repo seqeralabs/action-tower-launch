@@ -41,4 +41,4 @@ export OUT=$(tw -o json -v \
 
 # Strip secrets from the log file
 sed -i "s/$TOWER_ACCESS_TOKEN/xxxxxx/" $LOG_FN
-echo "json=\"$OUT\"" >> $GITHUB_OUTPUT
+echo "json=$OUT" >> $GITHUB_OUTPUT
