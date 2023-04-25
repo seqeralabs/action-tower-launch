@@ -232,6 +232,13 @@ The action creates the output variable `json` which is a JSON string of metadata
 }
 ```
 
+In addition, each variable is available as a separate output available under the following IDs:
+
+- `workflowId`
+- `workflowUrl`
+- `workspaceId`
+- `workspaceRef`
+
 This can be used in subsequent steps by parsing the JSON string:
 
 ```
