@@ -221,7 +221,7 @@ jobs:
 
 ### Output variables
 
-The action creates the output variable `json` which is a JSON string of metadata created by the Tower API. It looks like this:
+The action creates the output variable `json` which is a JSON string of metadata created by the Tower API. It looks like this and can be parsed using the built in `fromJSON()` method.
 
 ```
 {
@@ -238,15 +238,6 @@ In addition, each variable is available as a separate output available under the
 - `workflowUrl`
 - `workspaceId`
 - `workspaceRef`
-
-This can be used in subsequent steps by parsing the JSON string:
-
-```
-# TODO: Make this better
-inputs:
-  json: ${{ fromJSON( steps.tower-action.outputs.json) }}
-# Becomes an object which can be used, e.g. ${{ inputs.json.workflowId }}
-```
 
 ### Files
 
