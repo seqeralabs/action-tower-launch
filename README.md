@@ -248,9 +248,27 @@ inputs:
 # Becomes an object which can be used, e.g. ${{ inputs.json.workflowId }}
 ```
 
-### Logs
+### Files
 
-The action prints normal stdout info-level log messages to the actions console. However, it saves a verbose log file to `tower_action_*.log` (the `*` is a timestamp). We recommend using [`actions/upload-artifact`](https://github.com/actions/upload-artifact) in your GitHub Actions workflow as shown in the examples above, this will then expose this file as a download through the workflow summary page.
+The action prints normal stdout info-level log messages to the actions console. However, it also saves a verbose log file and an output JSON of job details as a file. We recommend using [`actions/upload-artifact`](https://github.com/actions/upload-artifact) in your GitHub Actions workflow as shown in the examples above, this will then expose this file to be used in subsequent jobs and as a download through the workflow summary page.
+
+The output log file is saved as `tower_action_$(timestamp).log` and can be captured using `actions/upload-artifact using the following settings:
+
+```
+      - uses: actions/upload-artifact@v3
+        with:
+          name: Tower debug log file
+          path: tower_action_*.log
+```
+
+The action writes a JSON file which has the same format as the `outputs.json` used above. This is wrtten to a file called `tower_action_$(uuidgen).json`. It can be captured in a similar manner:
+
+```
+      - uses: actions/upload-artifact@v3
+        with:
+          name: Tower output JSON file
+          path: tower_action_*.json
+```
 
 ## Credits
 
