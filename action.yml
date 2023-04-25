@@ -52,6 +52,10 @@ inputs:
     default: false
     required: false
 
+outputs:
+  json:
+    description: JSON from tw launch with workflowID, workflowUrl, workspaceId, workspaceRef
+
 runs:
   using: "docker"
   image: Dockerfile
@@ -69,7 +73,3 @@ runs:
     NEXTFLOW_CONFIG: ${{ inputs.nextflow_config }}
     PRE_RUN_SCRIPT: ${{ inputs.pre_run_script }}
     WAIT: ${{ inputs.wait }}
-
-outputs:
-  json:
-    description: JSON from tw launch with workflowID, workflowUrl, workspaceId, workspaceRef
