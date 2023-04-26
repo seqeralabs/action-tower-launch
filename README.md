@@ -252,6 +252,7 @@ From the example above, we can now extend it to use the output variables in down
 
 ```yaml
 on:
+  pull_request:
   push:
     branches: [dev]
 
