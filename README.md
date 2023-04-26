@@ -294,7 +294,8 @@ jobs:
           mv tw-* tw
           chmod +x tw
           sudo mv tw /usr/local/bin/
-          tw -o json runs view -w ${{ needs.run-tower.workspace_id }} -i ${{ needs.run-tower.workflow_id }}
+          # Use variables with ${{ needs.id.outputs.variable }} syntax
+          tw -o json runs view -w ${{ needs.run-tower.outputs.workspace_id }} -i ${{ needs.run-tower.outputs.workflow_id }}
 ```
 
 ### Files
