@@ -72,6 +72,12 @@ jobs:
             }
           # List of pipeline config profiles to use - comma separated list as a string
           profiles: test,aws_tower
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: ${{ needs.getdate.outputs.date }}_run_json
+          path: tower_action_*.json
+
       - uses: actions/upload-artifact@v3
         with:
           name: Tower debug log file
@@ -266,13 +272,17 @@ jobs:
           name: Tower debug log file
           path: tower_action_*.log
 
-      # Echo variables to console
-      - name: Echo variables
-        run: |
-          echo "Worfklow ID: ${{ steps.run.outputs.workflowId }}"
-          echo "Workflow URL: ${{ steps.run.outputs.workflowUrl }}"
-          echo "Workspace ID: ${{ steps.run.outputs.workspaceId }}"
-          echo "Workspace Reference: ${{ steps.run.outputs.workspaceRef }}"
+      - name: Comment PR
+        uses: thollander/actions-comment-pull-request@v2
+        with:
+          message: |
+            Pipeline launched, monitor progress [here](${{ steps.runs.outputs.workflowUrl }})
+            Details:
+              - Workflow ID: ${{ steps.runs.outputs.workflowId }}
+              - Workspace: ${{ steps.runs.outputs.WorkspaceRef }} 
+              - Workspace ID: ${{ steps.runs.outputs.workspaceId }}
+              - Workflow URL: ${{ steps.runs.outputs.workflowUrl }}
+          comment_tag: towerrun
 
       # Capture JSON and save as artifact
       - uses: actions/upload-artifact@v3
@@ -280,6 +290,13 @@ jobs:
         with:
           name: ${{ needs.getdate.outputs.date }}_run_json
           path: tower_action_*.json
+
+      # Capture logs
+      - uses: actions/upload-artifact@v3
+        if: success() || failure()
+        with:
+          name: Tower debug log file
+          path: tower_action_*.log
 
   # We install the Tower CLI and use the variables to get the details of the pipeline run.
   get_details:
