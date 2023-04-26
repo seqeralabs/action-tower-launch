@@ -291,9 +291,8 @@ jobs:
           # Install TW CLI
           set -euxo pipefail
           wget -L https://github.com/seqeralabs/tower-cli/releases/download/v0.7.3/tw-0.7.3-linux-x86_64
-          mv tw-* tw
-          chmod +x tw
-          sudo mv tw /usr/local/bin/
+          sudo mv tw-* /usr/local/bin/tw
+          chmod +x /usr/local/bin/tw
           # Use variables with ${{ needs.id.outputs.variable }} syntax
           tw -o json runs view -w ${{ needs.run-tower.outputs.workspace_id }} -i ${{ needs.run-tower.outputs.workflow_id }}
 ```
