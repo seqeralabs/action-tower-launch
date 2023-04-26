@@ -55,6 +55,14 @@ inputs:
 outputs:
   json:
     description: JSON from tw launch with workflowID, workflowUrl, workspaceId, workspaceRef
+  workflowId:
+    description: Unique ID of the pipeline run in Nextflow Tower.
+  workflowUrl:
+    description: URL to pipeline run in Nextflow Tower.
+  workspaceId:
+    description: Unique ID of workspace in Nextflow Tower in which the pipeline is running.
+  workspaceRef:
+    description: Human readable format of workspace in Nextflow tower in format '[ organisation / workspace ]'.
 
 runs:
   using: "docker"

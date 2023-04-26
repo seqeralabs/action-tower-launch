@@ -239,6 +239,64 @@ In addition, each variable is available as a separate output available under the
 - `workspaceId`
 - `workspaceRef`
 
+From the example above, we can now extend it to use the output variables in downstream steps and jobs. In this example we use the output variables twice:
+
+- We capture the output variables of the _step_ and use it as an output of the _job_. We then use it in a second job.
+- We use the outputs in a following step where we echo them to the console.
+
+```yaml
+on:
+  push:
+    branches: [dev]
+
+jobs:
+  run-tower:
+    runs-on: ubuntu-latest
+    # Capture action outputs as outputs for the job
+    outputs:
+      workflow_id: ${{ steps.run.outputs.workflowId }}
+      workspace_id: ${{ steps.run.outputs.workspaceId }}
+    steps:
+      - uses: seqeralabs/action-tower-launch@v1
+        with:
+          access_token: ${{ secrets.TOWER_ACCESS_TOKEN }}
+      - uses: actions/upload-artifact@v3
+        id: run # Add id attribute to step
+        with:
+          name: Tower debug log file
+          path: tower_action_*.log
+
+      # Echo variables to console
+      - name: Echo variables
+        run: |
+          echo "Worfklow ID: ${{ steps.run.outputs.workflowId }}"
+          echo "Workflow URL: ${{ steps.run.outputs.workflowUrl }}"
+          echo "Workspace ID: ${{ steps.run.outputs.workspaceId }}"
+          echo "Workspace Reference: ${{ steps.run.outputs.workspaceRef }}"
+
+      # Capture JSON and save as artifact
+      - uses: actions/upload-artifact@v3
+        if: success() || failure()
+        with:
+          name: ${{ needs.getdate.outputs.date }}_run_json
+          path: tower_action_*.json
+
+  # We install the Tower CLI and use the variables to get the details of the pipeline run.
+  get_details:
+    runs-on: ubuntu-latest
+    needs: [run-tower]
+    steps:
+      - name: Get run details
+        run: |
+          # Install TW CLI
+          set -euxo pipefail
+          wget -L https://github.com/seqeralabs/tower-cli/releases/download/v0.7.3/tw-0.7.3-linux-x86_64
+          mv tw-* tw
+          chmod +x tw
+          sudo mv tw /usr/local/bin/
+          tw -o json runs view -w ${{ needs.run-tower.workspace_id }} -i ${{ needs.run-tower.workflow_id }}
+```
+
 ### Files
 
 The action prints normal stdout info-level log messages to the actions console. However, it also saves a verbose log file and an output JSON of job details as a file. We recommend using [`actions/upload-artifact`](https://github.com/actions/upload-artifact) in your GitHub Actions workflow as shown in the examples above, this will then expose this file to be used in subsequent jobs and as a download through the workflow summary page.
