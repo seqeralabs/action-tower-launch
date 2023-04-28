@@ -38,13 +38,13 @@ export OUT=$(tw -o json -v \
     ${PRE_RUN_SCRIPT:+"--pre-run=pre_run.sh"} \
     ${NEXTFLOW_CONFIG:+"--config=nextflow.config"} \
     ${WAIT:+"--wait=$WAIT"} \
-    2>> $LOG_FN | tee -a $LOG_FN | jq -rc)
+    2>> $LOG_FN | tee -a $LOG_FN | base64 -w 0)
 
-echo workflowId=$(echo $OUT | jq '.workflowId') >> $GITHUB_OUTPUT
-echo workflowUrl=$(echo $OUT | jq '.workflowUrl') >> $GITHUB_OUTPUT
-echo workspaceId=$(echo $OUT | jq '.workspaceId') >> $GITHUB_OUTPUT
-echo workspaceRef=$(echo $OUT | jq '.workspaceRef') >> $GITHUB_OUTPUT
-echo json=$OUT >> $GITHUB_OUTPUT
+echo workflowId=$(echo $OUT | base64 --decode | jq '.workflowId') >> $GITHUB_OUTPUT
+echo workflowUrl=$(echo $OUT | base64 --decode  | jq '.workflowUrl') >> $GITHUB_OUTPUT
+echo workspaceId=$(echo $OUT | base64 --decode  | jq '.workspaceId') >> $GITHUB_OUTPUT
+echo workspaceRef=$(echo $OUT | base64 --decode  | jq '.workspaceRef') >> $GITHUB_OUTPUT
+echo json=$(echo $OUT | base64 --decode)  >> $GITHUB_OUTPUT
 
 # Strip secrets from the log file
 sed -i "s/$TOWER_ACCESS_TOKEN/xxxxxx/" $LOG_FN
