@@ -2,7 +2,8 @@
 set -euxo pipefail
 
 # Use `tee` to print just stdout to the console but save stdout + stderr to a file
-LOG_FN="tower_action_"$(date +'%Y_%m_%d-%H_%M')".log"
+LOG_FN="tower_action_"$(date +'%Y_%m_%d-%H_%M')"_.log"
+LOG_JSON="tower_action_"$(uuidgen)".json"
 
 # Manual curl of service-info
 curl https://api.tower.nf/service-info >> $LOG_FN
@@ -25,7 +26,7 @@ echo -e "$NEXTFLOW_CONFIG" > nextflow.config
 if [ "$WAIT" = false ]; then unset WAIT; fi
 
 # Launch the pipeline
-tw -v \
+export OUT=$(tw -o json -v \
     launch \
     $PIPELINE \
     --params-file=params.json \
@@ -37,7 +38,16 @@ tw -v \
     ${PRE_RUN_SCRIPT:+"--pre-run=pre_run.sh"} \
     ${NEXTFLOW_CONFIG:+"--config=nextflow.config"} \
     ${WAIT:+"--wait=$WAIT"} \
-    2>> $LOG_FN | tee -a $LOG_FN
+    2>> $LOG_FN | tee -a $LOG_FN | jq -rc)
+
+echo workflowId=$(echo $OUT | jq '.workflowId') >> $GITHUB_OUTPUT
+echo workflowUrl=$(echo $OUT | jq '.workflowUrl') >> $GITHUB_OUTPUT
+echo workspaceId=$(echo $OUT | jq '.workspaceId') >> $GITHUB_OUTPUT
+echo workspaceRef=$(echo $OUT | jq '.workspaceRef') >> $GITHUB_OUTPUT
+echo json=$OUT >> $GITHUB_OUTPUT
 
 # Strip secrets from the log file
 sed -i "s/$TOWER_ACCESS_TOKEN/xxxxxx/" $LOG_FN
+
+# Create output json file
+echo $OUT > $LOG_JSON
