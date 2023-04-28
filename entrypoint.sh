@@ -2,6 +2,7 @@
 set -euo pipefail
 
 # Mask certain variables from Github logs
+echo "::add-mask::$TOWER_WORKSPACE_ID"
 echo "::add-mask::$TOWER_API_ENDPOINT"
 echo "::add-mask::$TOWER_ACCESS_TOKEN"
 echo "::add-mask::$TOWER_COMPUTE_ENV"
@@ -43,12 +44,12 @@ export OUT=$(tw -o json -v \
     ${PRE_RUN_SCRIPT:+"--pre-run=pre_run.sh"} \
     ${NEXTFLOW_CONFIG:+"--config=nextflow.config"} \
     ${WAIT:+"--wait=$WAIT"} \
-    2>> $LOG_FN | tee -a $LOG_FN)
+    2>> $LOG_FN | tee -a $LOG_FN | base64 -w 0)
 
-export workflowId=$(echo $OUT | jq '.workflowId')
-export workflowUrl=$(echo $OUT | jq '.workflowUrl')
-export workspaceId=$(echo $OUT | jq '.workspaceId')
-export workspaceRef=$(echo $OUT | jq '.workspaceRef')
+export workflowId=$(echo $OUT | base64 -d | jq '.workflowId')
+export workflowUrl=$(echo $OUT | base64 -d | jq '.workflowUrl')
+export workspaceId=$(echo $OUT | base64 -d | jq '.workspaceId')
+export workspaceRef=$(echo $OUT | base64 -d | jq '.workspaceRef')
 
 echo "::add-mask::$OUT"
 echo "::add-mask::$workflowId"
