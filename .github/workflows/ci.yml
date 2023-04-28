@@ -17,7 +17,7 @@ jobs:
     if: github.repository == 'seqeralabs/action-tower-launch'
     runs-on: ubuntu-latest
     steps:
-      - uses: seqeralabs/action-tower-launch@${{ github.sha }}
+      - uses: seqeralabs/action-tower-launch@${{ env.GITHUB_SHA }}
         id: runs
         # Use repository secrets for sensitive fields
         with:
