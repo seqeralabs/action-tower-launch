@@ -44,12 +44,12 @@ export OUT=$(tw -o json -v \
     ${PRE_RUN_SCRIPT:+"--pre-run=pre_run.sh"} \
     ${NEXTFLOW_CONFIG:+"--config=nextflow.config"} \
     ${WAIT:+"--wait=$WAIT"} \
-    2>> $LOG_FN | tee -a $LOG_FN | base64 -w 0)
+    2>> $LOG_FN | tee -a $LOG_FN)
 
-export workflowId=$(echo $OUT | base64 -d | jq '.workflowId')
-export workflowUrl=$(echo $OUT | base64 -d | jq '.workflowUrl')
-export workspaceId=$(echo $OUT | base64 -d | jq '.workspaceId')
-export workspaceRef=$(echo $OUT | base64 -d | jq '.workspaceRef')
+export workflowId=$(echo $OUT | jq '.workflowId')
+export workflowUrl=$(echo $OUT | jq '.workflowUrl')
+export workspaceId=$(echo $OUT | jq '.workspaceId')
+export workspaceRef=$(echo $OUT | jq '.workspaceRef')
 
 echo "::add-mask::$OUT"
 echo "::add-mask::$workflowId"
