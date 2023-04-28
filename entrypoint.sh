@@ -1,6 +1,12 @@
 #!/bin/sh
 set -euxo pipefail
 
+# Mask certain variables from Github logs
+echo "::add-mask::$TOWER_WORKSPACE_ID"
+echo "::add-mask::$TOWER_API_ENDPOINT"
+echo "::add-mask::$TOWER_ACCESS_TOKEN"
+echo "::add-mask::$TOWER_COMPUTE_ENV"
+
 # Use `tee` to print just stdout to the console but save stdout + stderr to a file
 LOG_FN="tower_action_"$(date +'%Y_%m_%d-%H_%M')"_.log"
 LOG_JSON="tower_action_"$(uuidgen)".json"
@@ -39,6 +45,8 @@ export OUT=$(tw -o json -v \
     ${NEXTFLOW_CONFIG:+"--config=nextflow.config"} \
     ${WAIT:+"--wait=$WAIT"} \
     2>> $LOG_FN | tee -a $LOG_FN | base64 -w 0)
+
+echo "::add-mask::$OUT"
 
 echo workflowId=$(echo $OUT | base64 --decode | jq '.workflowId') >> $GITHUB_OUTPUT
 echo workflowUrl=$(echo $OUT | base64 --decode  | jq '.workflowUrl') >> $GITHUB_OUTPUT
