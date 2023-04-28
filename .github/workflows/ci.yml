@@ -1,51 +1,52 @@
 name: CI/CD Action
 
 on:
-    push:
-      branches:
-        - dev
-    pull_request:
-    release:
-      types: [published]
-    workflow_dispatch:
-  
-jobs:
-    run-tower:
-        name: Launch on Nextflow Tower
-        # Don't try to run on forked repos
-        if: github.repository == 'YOUR_USERNAME/REPO'
-        runs-on: ubuntu-latest
-        steps:
-          - uses: seqeralabs/action-tower-launch@v1
-            id: runs
-            # Use repository secrets for sensitive fields
-            with:
-              pipeline: nextflow-io/hello
-              revision: master
-              workspace_id: ${{ secrets.TOWER_WORKSPACE_ID }}
-              access_token: ${{ secrets.TOWER_ACCESS_TOKEN }}
-              compute_env: ${{ secrets.TOWER_COMPUTE_ENV }}
-              run_name: ${{ github.job }}_${{ github.run_attempt }}
-              workdir: ${{ secrets.AWS_S3_BUCKET }}/work/${{ github.sha }}
+  push:
+    branches:
+      - dev
+      - main
+  pull_request:
+  release:
+    types: [published]
+  workflow_dispatch:
 
-          - name: Comment PR
-            uses: thollander/actions-comment-pull-request@v2
-            with:
-                message: |
-                    Pipeline launched, monitor progress [here](${{ steps.runs.outputs.workflowUrl }})
-                    Details:
-                     - Workflow ID: ${{ steps.runs.outputs.workflowId }}
-                     - Workspace: ${{ steps.runs.outputs.WorkspaceRef }} 
-                     - Workspace ID: ${{ steps.runs.outputs.workspaceId }}
-                     - Workflow URL: ${{ steps.runs.outputs.workflowUrl }}
-                comment_tag: towerrun
-    
-          - uses: actions/upload-artifact@v3
-            with:
-              name: ${{ needs.getdate.outputs.date }}_run_json
-              path: tower_action_*.json
-    
-          - uses: actions/upload-artifact@v3
-            with:
-              name: Tower debug log file
-              path: tower_action_*.log
+jobs:
+  run-tower:
+    name: Launch on Nextflow Tower
+    # Don't try to run on forked repos
+    if: github.repository == 'YOUR_USERNAME/REPO'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: seqeralabs/action-tower-launch@v1
+        id: runs
+        # Use repository secrets for sensitive fields
+        with:
+          pipeline: nextflow-io/hello
+          revision: master
+          workspace_id: ${{ secrets.TOWER_WORKSPACE_ID }}
+          access_token: ${{ secrets.TOWER_ACCESS_TOKEN }}
+          compute_env: ${{ secrets.TOWER_COMPUTE_ENV }}
+          run_name: ${{ github.job }}_${{ github.run_attempt }}
+          workdir: ${{ secrets.AWS_S3_BUCKET }}/work/${{ github.sha }}
+
+      - name: Comment PR
+        uses: thollander/actions-comment-pull-request@v2
+        with:
+          message: |
+            Pipeline launched, monitor progress [here](${{ steps.runs.outputs.workflowUrl }})
+            Details:
+             - Workflow ID: ${{ steps.runs.outputs.workflowId }}
+             - Workspace: ${{ steps.runs.outputs.WorkspaceRef }} 
+             - Workspace ID: ${{ steps.runs.outputs.workspaceId }}
+             - Workflow URL: ${{ steps.runs.outputs.workflowUrl }}
+          comment_tag: towerrun
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: ${{ needs.getdate.outputs.date }}_run_json
+          path: tower_action_*.json
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: Tower debug log file
+          path: tower_action_*.log
