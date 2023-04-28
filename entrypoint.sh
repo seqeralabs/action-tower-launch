@@ -51,11 +51,11 @@ export workflowUrl=$(echo $OUT | base64 -d | jq '.workflowUrl')
 export workspaceId=$(echo $OUT | base64 -d | jq '.workspaceId')
 export workspaceRef=$(echo $OUT | base64 -d | jq '.workspaceRef')
 
-# echo "::add-mask::$OUT"
-# echo "::add-mask::$workflowId"
-# echo "::add-mask::$workflowUrl"
-# echo "::add-mask::$workspaceId"
-# echo "::add-mask::$workspaceRef"
+echo "::add-mask::$OUT"
+echo "::add-mask::$workflowId"
+echo "::add-mask::$workflowUrl"
+echo "::add-mask::$workspaceId"
+echo "::add-mask::$workspaceRef"
 
 echo "workflowId=$workflowId" >> $GITHUB_OUTPUT
 echo "workflowUrl=$workflowUrl" >> $GITHUB_OUTPUT

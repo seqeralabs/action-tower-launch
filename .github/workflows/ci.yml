@@ -23,12 +23,12 @@ jobs:
         id: runs
         # Use repository secrets for sensitive fields
         with:
-          pipeline: nextflow-io/hello
+          pipeline: hello_world
           revision: master
           workspace_id: ${{ secrets.TOWER_WORKSPACE_ID }}
           access_token: ${{ secrets.TOWER_ACCESS_TOKEN }}
           compute_env: ${{ secrets.TOWER_COMPUTE_ENV }}
-          run_name: ${{ github.job }}_${{ github.run_attempt }}
+          run_name: ${{ github.job }}_${{ github.sha }}
           workdir: ${{ secrets.AWS_S3_BUCKET }}/work/${{ github.sha }}
 
       - name: Comment PR
@@ -46,7 +46,7 @@ jobs:
 
       - uses: actions/upload-artifact@v3
         with:
-          name: ${{ needs.getdate.outputs.date }}_run_json
+          name: ${{ github.job }}_run_json
           path: tower_action_*.json
 
       - uses: actions/upload-artifact@v3
