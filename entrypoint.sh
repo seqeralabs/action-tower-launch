@@ -44,15 +44,20 @@ export OUT=$(tw -o json -v \
     ${PRE_RUN_SCRIPT:+"--pre-run=pre_run.sh"} \
     ${NEXTFLOW_CONFIG:+"--config=nextflow.config"} \
     ${WAIT:+"--wait=$WAIT"} \
-    2>> $LOG_FN | tee -a $LOG_FN | base64 -w 0)
+    2>> $LOG_FN | tee -a $LOG_FN)
 
-echo $OUT
+echo "::add-mask::$OUT"
 
-echo workflowId=$(echo $OUT | base64 -d | jq '.workflowId') >> $GITHUB_OUTPUT
-echo workflowUrl=$(echo $OUT | base64 -d  | jq '.workflowUrl') >> $GITHUB_OUTPUT
-echo workspaceId=$(echo $OUT | base64 -d  | jq '.workspaceId') >> $GITHUB_OUTPUT
-echo workspaceRef=$(echo $OUT | base64 -d  | jq '.workspaceRef') >> $GITHUB_OUTPUT
-echo json=$(echo $OUT | base64 -d)  >> $GITHUB_OUTPUT
+echo workflowId=$(echo $OUT | jq '.workflowId') >> $GITHUB_OUTPUT
+echo workflowUrl=$(echo $OUT | jq '.workflowUrl') >> $GITHUB_OUTPUT
+echo workspaceId=$(echo $OUT | jq '.workspaceId') >> $GITHUB_OUTPUT
+echo workspaceRef=$(echo $OUT | jq '.workspaceRef') >> $GITHUB_OUTPUT
+echo "json=$OUT"  >> $GITHUB_OUTPUT
+
+echo "::add-mask::$workflowId"
+echo "::add-mask::$workflowUrl"
+echo "::add-mask::$workspaceId"
+echo "::add-mask::$workspaceRef"
 
 # Strip secrets from the log file
 sed -i "s/$TOWER_ACCESS_TOKEN/xxxxxx/" $LOG_FN
