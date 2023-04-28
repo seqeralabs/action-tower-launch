@@ -48,10 +48,10 @@ export OUT=$(tw -o json -v \
     2>> $LOG_FN | tee -a $LOG_FN | base64 -w 0)
 
 # Base64 decode and extract specific value for output
-export workflowId=$(echo $OUT | base64 -d | jq '.workflowId')
-export workflowUrl=$(echo $OUT | base64 -d | jq '.workflowUrl')
-export workspaceId=$(echo $OUT | base64 -d | jq '.workspaceId')
-export workspaceRef=$(echo $OUT | base64 -d | jq '.workspaceRef')
+export workflowId=$(echo $OUT | base64 -d | jq -r '.workflowId')
+export workflowUrl=$(echo $OUT | base64 -d | jq -r '.workflowUrl')
+export workspaceId=$(echo $OUT | base64 -d | jq -r '.workspaceId')
+export workspaceRef=$(echo $OUT | base64 -d | jq -r '.workspaceRef')
 
 # Hide from the logs for Github Actions. Not crucial but good practice.
 echo "::add-mask::$OUT"
