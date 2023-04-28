@@ -58,7 +58,7 @@ echo "::add-mask::$workspaceId"
 echo "::add-mask::$workspaceRef"
 
 echo "workflowId=$workflowId" >> $GITHUB_OUTPUT
-echo "workflowUrl=$workflowUrl" >> $GITHUB_OUTPUT
+echo "workflowUrl=$(echo $workflowUrl | sed 's/"//g')" >> $GITHUB_OUTPUT # We must remove quotes for the URL
 echo "workspaceId=$workspaceId" >> $GITHUB_OUTPUT
 echo "workspaceRef=$workspaceRef" >> $GITHUB_OUTPUT
 echo "json=$OUT"  >> $GITHUB_OUTPUT
