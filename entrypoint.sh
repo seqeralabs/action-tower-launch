@@ -46,18 +46,25 @@ export OUT=$(tw -o json -v \
     ${WAIT:+"--wait=$WAIT"} \
     2>> $LOG_FN | tee -a $LOG_FN)
 
+
+export workflowId=$(echo $OUT | jq '.workflowId')
+export workflowUrl=$(echo $OUT | jq '.workflowUrl')
+export workspaceId=$(echo $OUT | jq '.workspaceId')
+export workspaceRef=$(echo $OUT | jq '.workspaceRef')
+
 echo "::add-mask::$OUT"
-
-echo workflowId=$(echo $OUT | jq '.workflowId') >> $GITHUB_OUTPUT
-echo workflowUrl=$(echo $OUT | jq '.workflowUrl') >> $GITHUB_OUTPUT
-echo workspaceId=$(echo $OUT | jq '.workspaceId') >> $GITHUB_OUTPUT
-echo workspaceRef=$(echo $OUT | jq '.workspaceRef') >> $GITHUB_OUTPUT
-echo "json=$OUT"  >> $GITHUB_OUTPUT
-
 echo "::add-mask::$workflowId"
 echo "::add-mask::$workflowUrl"
 echo "::add-mask::$workspaceId"
 echo "::add-mask::$workspaceRef"
+
+echo "workflowId=$workflowId" >> $GITHUB_OUTPUT
+echo "workflowUrl=$workflowUrl" >> $GITHUB_OUTPUT
+echo "workspaceId=$workspaceId" >> $GITHUB_OUTPUT
+echo "workspaceRef=$workspaceRef" >> $GITHUB_OUTPUT
+echo "json=$OUT"  >> $GITHUB_OUTPUT
+
+
 
 # Strip secrets from the log file
 sed -i "s/$TOWER_ACCESS_TOKEN/xxxxxx/" $LOG_FN
