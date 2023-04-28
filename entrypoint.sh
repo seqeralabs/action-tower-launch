@@ -32,6 +32,7 @@ echo -e "$NEXTFLOW_CONFIG" > nextflow.config
 if [ "$WAIT" = false ]; then unset WAIT; fi
 
 # Launch the pipeline
+# We use capture the JSON as variable $OUT. We encode it as base64 to get around Github secrets filters but we still mask it anyway to make sure the details don't leak.
 export OUT=$(tw -o json -v \
     launch \
     $PIPELINE \
@@ -46,17 +47,20 @@ export OUT=$(tw -o json -v \
     ${WAIT:+"--wait=$WAIT"} \
     2>> $LOG_FN | tee -a $LOG_FN | base64 -w 0)
 
+# Base64 decode and extract specific value for output
 export workflowId=$(echo $OUT | base64 -d | jq '.workflowId')
 export workflowUrl=$(echo $OUT | base64 -d | jq '.workflowUrl')
 export workspaceId=$(echo $OUT | base64 -d | jq '.workspaceId')
 export workspaceRef=$(echo $OUT | base64 -d | jq '.workspaceRef')
 
+# Hide from the logs for Github Actions. Not crucial but good practice.
 echo "::add-mask::$OUT"
 echo "::add-mask::$workflowId"
 echo "::add-mask::$workflowUrl"
 echo "::add-mask::$workspaceId"
 echo "::add-mask::$workspaceRef"
 
+# Export to Github variables
 echo "workflowId=$workflowId" >> $GITHUB_OUTPUT
 echo "workflowUrl=$(echo $workflowUrl | sed 's/"//g')" >> $GITHUB_OUTPUT # We must remove quotes for the URL
 echo "workspaceId=$workspaceId" >> $GITHUB_OUTPUT
