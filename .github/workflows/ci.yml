@@ -17,12 +17,7 @@ jobs:
     if: github.repository == 'seqeralabs/action-tower-launch'
     runs-on: ubuntu-latest
     steps:
-      - name: Extract branch name
-        shell: bash
-        run: echo "sha=${{ github.sha }}" >>$GITHUB_OUTPUT
-        id: extract_sha
-
-      - uses: seqeralabs/action-tower-launch@${{ steps.extract_sha.outputs.sha }}
+      - uses: ./
         id: runs
         # Use repository secrets for sensitive fields
         with:
