@@ -2,7 +2,6 @@
 set -euo pipefail
 
 # Mask certain variables from Github logs
-echo "::add-mask::$TOWER_WORKSPACE_ID"
 echo "::add-mask::$TOWER_API_ENDPOINT"
 echo "::add-mask::$TOWER_ACCESS_TOKEN"
 echo "::add-mask::$TOWER_COMPUTE_ENV"
