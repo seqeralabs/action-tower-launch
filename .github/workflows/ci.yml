@@ -14,7 +14,7 @@ jobs:
   run-tower:
     name: Launch on Nextflow Tower
     # Don't try to run on forked repos
-    if: github.repository == 'YOUR_USERNAME/REPO'
+    if: github.repository == 'seqeralabs/action-tower-launch'
     runs-on: ubuntu-latest
     steps:
       - uses: seqeralabs/action-tower-launch@v1
