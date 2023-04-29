@@ -35,13 +35,14 @@ jobs:
         uses: thollander/actions-comment-pull-request@v2
         with:
           message: |
-            Pipeline launched, monitor progress [here](${{ steps.runs.outputs.workflowUrl }})
+            ### 🚀 Pipeline launched, monitor progress [here](${{ steps.runs.outputs.workflowUrl }}).
 
-            Details:
-             - Workflow ID: ${{ steps.runs.outputs.workflowId }}
-             - Workspace: ${{ steps.runs.outputs.workspaceRef }} 
-             - Workspace ID: ${{ steps.runs.outputs.workspaceId }}
-             - Workflow URL: ${{ steps.runs.outputs.workflowUrl }}
+            | Name | Info |
+            |------|------|
+            | 🔨 Workflow ID | `${{ steps.runs.outputs.workflowId }}` |
+            | 🏠 Workspace | `${{ steps.runs.outputs.workspaceRef }}` |
+            | 🗂️ Workspace ID | `${{ steps.runs.outputs.workspaceId }}` |
+            | 😎 Workflow URL | ${{ steps.runs.outputs.workflowUrl }} |
           comment_tag: towerrun
 
       - uses: actions/upload-artifact@v3
