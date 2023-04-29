@@ -25,10 +25,6 @@ jobs:
         # Use repository secrets for sensitive fields
         with:
           access_token: ${{ secrets.TOWER_ACCESS_TOKEN }}
-      - uses: actions/upload-artifact@v3
-        with:
-          name: Tower debug log file
-          path: tower_action_*.log
 ```
 
 ### Complete example
@@ -75,13 +71,10 @@ jobs:
 
       - uses: actions/upload-artifact@v3
         with:
-          name: ${{ needs.getdate.outputs.date }}_run_json
-          path: tower_action_*.json
-
-      - uses: actions/upload-artifact@v3
-        with:
-          name: Tower debug log file
-          path: tower_action_*.log
+          name: ${{ needs.getdate.outputs.date }}_run_logs
+          path: |
+            tower_action_*.log
+            tower_action_*.json
 ```
 
 ## Inputs
@@ -267,11 +260,6 @@ jobs:
       - uses: seqeralabs/action-tower-launch@v1
         with:
           access_token: ${{ secrets.TOWER_ACCESS_TOKEN }}
-      - uses: actions/upload-artifact@v3
-        id: run # Add id attribute to step
-        with:
-          name: Tower debug log file
-          path: tower_action_*.log
 
       - name: Comment PR
         uses: thollander/actions-comment-pull-request@v2
@@ -280,24 +268,19 @@ jobs:
             Pipeline launched, monitor progress [here](${{ steps.runs.outputs.workflowUrl }})
             Details:
               - Workflow ID: ${{ steps.runs.outputs.workflowId }}
-              - Workspace: ${{ steps.runs.outputs.WorkspaceRef }} 
+              - Workspace: ${{ steps.runs.outputs.WorkspaceRef }}
               - Workspace ID: ${{ steps.runs.outputs.workspaceId }}
               - Workflow URL: ${{ steps.runs.outputs.workflowUrl }}
           comment_tag: towerrun
 
-      # Capture JSON and save as artifact
+      # Capture JSON + logs and save as artifacts
       - uses: actions/upload-artifact@v3
         if: success() || failure()
         with:
-          name: ${{ needs.getdate.outputs.date }}_run_json
-          path: tower_action_*.json
-
-      # Capture logs
-      - uses: actions/upload-artifact@v3
-        if: success() || failure()
-        with:
-          name: Tower debug log file
-          path: tower_action_*.log
+          name: ${{ needs.getdate.outputs.date }}_run_logs
+          path: |
+            tower_action_*.log
+            tower_action_*.json
 
   # We install the Tower CLI and use the variables to get the details of the pipeline run.
   get_details:
@@ -310,8 +293,11 @@ jobs:
           wget -L https://github.com/seqeralabs/tower-cli/releases/download/v0.7.3/tw-0.7.3-linux-x86_64
           sudo mv tw-* /usr/local/bin/tw
           chmod +x /usr/local/bin/tw
+
           # Use variables with ${{ needs.id.outputs.variable }} syntax
-          tw -o json runs view -w ${{ needs.run-tower.outputs.workspace_id }} -i ${{ needs.run-tower.outputs.workflow_id }}
+          tw -o json runs view \
+             -w ${{ needs.run-tower.outputs.workspace_id }} \
+             -i ${{ needs.run-tower.outputs.workflow_id }}
 ```
 
 ### Files
@@ -320,7 +306,7 @@ The action prints normal stdout info-level log messages to the actions console. 
 
 The output log file is saved as `tower_action_$(timestamp).log` and can be captured using `actions/upload-artifact using the following settings:
 
-```
+```yaml
       - uses: actions/upload-artifact@v3
         with:
           name: Tower debug log file
@@ -329,7 +315,7 @@ The output log file is saved as `tower_action_$(timestamp).log` and can be captu
 
 The action writes a JSON file which has the same format as the `outputs.json` used above. This is wrtten to a file called `tower_action_$(uuidgen).json`. It can be captured in a similar manner:
 
-```
+```yaml
       - uses: actions/upload-artifact@v3
         with:
           name: Tower output JSON file
