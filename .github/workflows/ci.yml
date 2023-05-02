@@ -44,6 +44,7 @@ jobs:
             | 🗂️ Workspace ID | `${{ steps.runs.outputs.workspaceId }}` |
             | 😎 Workflow URL | ${{ steps.runs.outputs.workflowUrl }} |
           comment_tag: towerrun
+        if: github.event_name == 'pull_request'
 
       - uses: actions/upload-artifact@v3
         with:
