@@ -54,12 +54,6 @@ export workflowUrl=$(echo $OUT | base64 -d | jq -r '.workflowUrl')
 export workspaceId=$(echo $OUT | base64 -d | jq -r '.workspaceId')
 export workspaceRef=$(echo $OUT | base64 -d | jq -r '.workspaceRef')
 
-# Hide from the logs for Github Actions. Not crucial but good practice.
-echo "::add-mask::$workflowId"
-echo "::add-mask::$workflowUrl"
-echo "::add-mask::$workspaceId"
-echo "::add-mask::$workspaceRef"
-
 # Export to Github variables
 echo "workflowId=$workflowId" >> $GITHUB_OUTPUT
 echo "workflowUrl=$(echo $workflowUrl | sed 's/"//g')" >> $GITHUB_OUTPUT # We must remove quotes for the URL
