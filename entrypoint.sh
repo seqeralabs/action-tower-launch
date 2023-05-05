@@ -2,8 +2,10 @@
 set -euo pipefail
 
 # Mask certain variables from Github logs
+echo "::add-mask::$TOWER_WORKSPACE_ID"
 echo "::add-mask::$TOWER_API_ENDPOINT"
 echo "::add-mask::$TOWER_ACCESS_TOKEN"
+echo "::add-mask::$TOWER_COMPUTE_ENV"
 
 # Use `tee` to print just stdout to the console but save stdout + stderr to a file
 LOG_FN="tower_action_"$(date +'%Y_%m_%d-%H_%M')"_.log"
@@ -45,9 +47,6 @@ export OUT=$(tw -o json -v \
     ${WAIT:+"--wait=$WAIT"} \
     2>> $LOG_FN | tee -a $LOG_FN | base64 -w 0)
 
-# Save JSON output
-echo "json='$(echo $OUT | base64 -d | jq -rc)'"  >> $GITHUB_OUTPUT
-
 # Base64 decode and extract specific value for output
 export workflowId=$(echo $OUT | base64 -d | jq -r '.workflowId')
 export workflowUrl=$(echo $OUT | base64 -d | jq -r '.workflowUrl')
@@ -55,6 +54,7 @@ export workspaceId=$(echo $OUT | base64 -d | jq -r '.workspaceId')
 export workspaceRef=$(echo $OUT | base64 -d | jq -r '.workspaceRef')
 
 # Hide from the logs for Github Actions. Not crucial but good practice.
+echo "::add-mask::$OUT"
 echo "::add-mask::$workflowId"
 echo "::add-mask::$workflowUrl"
 echo "::add-mask::$workspaceId"
@@ -65,6 +65,7 @@ echo "workflowId=$workflowId" >> $GITHUB_OUTPUT
 echo "workflowUrl=$(echo $workflowUrl | sed 's/"//g')" >> $GITHUB_OUTPUT # We must remove quotes for the URL
 echo "workspaceId=$workspaceId" >> $GITHUB_OUTPUT
 echo "workspaceRef=$workspaceRef" >> $GITHUB_OUTPUT
+echo "json='$(echo $OUT | base64 -d | jq -rc)'"  >> $GITHUB_OUTPUT
 
 # Strip secrets from the log file
 sed -i "s/$TOWER_ACCESS_TOKEN/xxxxxx/" $LOG_FN
