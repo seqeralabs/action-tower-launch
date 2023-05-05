@@ -62,7 +62,7 @@ echo "workflowId=$workflowId" >> $GITHUB_OUTPUT
 echo "workflowUrl=$(echo $workflowUrl | sed 's/"//g')" >> $GITHUB_OUTPUT # We must remove quotes for the URL
 echo "workspaceId=$workspaceId" >> $GITHUB_OUTPUT
 echo "workspaceRef=$workspaceRef" >> $GITHUB_OUTPUT
-echo "json='$(base64 -d <<< $OUT)'"  >> $GITHUB_OUTPUT
+echo "json='$(echo $OUT | base64 -d)'"  >> $GITHUB_OUTPUT
 
 # Strip secrets from the log file
 sed -i "s/$TOWER_ACCESS_TOKEN/xxxxxx/" $LOG_FN
