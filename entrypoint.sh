@@ -2,10 +2,8 @@
 set -euo pipefail
 
 # Mask certain variables from Github logs
-echo "::add-mask::$TOWER_WORKSPACE_ID"
 echo "::add-mask::$TOWER_API_ENDPOINT"
 echo "::add-mask::$TOWER_ACCESS_TOKEN"
-echo "::add-mask::$TOWER_COMPUTE_ENV"
 
 # Use `tee` to print just stdout to the console but save stdout + stderr to a file
 LOG_FN="tower_action_"$(date +'%Y_%m_%d-%H_%M')"_.log"
@@ -54,7 +52,6 @@ export workspaceId=$(echo $OUT | base64 -d | jq -r '.workspaceId')
 export workspaceRef=$(echo $OUT | base64 -d | jq -r '.workspaceRef')
 
 # Hide from the logs for Github Actions. Not crucial but good practice.
-echo "::add-mask::$OUT"
 echo "::add-mask::$workflowId"
 echo "::add-mask::$workflowUrl"
 echo "::add-mask::$workspaceId"
