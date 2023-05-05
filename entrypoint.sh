@@ -45,6 +45,9 @@ export OUT=$(tw -o json -v \
     ${WAIT:+"--wait=$WAIT"} \
     2>> $LOG_FN | tee -a $LOG_FN | base64 -w 0)
 
+# Save JSON output
+echo "json='$(echo $OUT | base64 -d)'"  >> $GITHUB_OUTPUT
+
 # Base64 decode and extract specific value for output
 export workflowId=$(echo $OUT | base64 -d | jq -r '.workflowId')
 export workflowUrl=$(echo $OUT | base64 -d | jq -r '.workflowUrl')
@@ -62,7 +65,6 @@ echo "workflowId=$workflowId" >> $GITHUB_OUTPUT
 echo "workflowUrl=$(echo $workflowUrl | sed 's/"//g')" >> $GITHUB_OUTPUT # We must remove quotes for the URL
 echo "workspaceId=$workspaceId" >> $GITHUB_OUTPUT
 echo "workspaceRef=$workspaceRef" >> $GITHUB_OUTPUT
-echo "json='$(echo $OUT | base64 -d)'"  >> $GITHUB_OUTPUT
 
 # Strip secrets from the log file
 sed -i "s/$TOWER_ACCESS_TOKEN/xxxxxx/" $LOG_FN
