@@ -46,13 +46,19 @@ export OUT=$(tw -o json -v \
     2>> $LOG_FN | tee -a $LOG_FN | base64 -w 0)
 
 # Save JSON output
-echo "json='$(echo $OUT | base64 -d)'"  >> $GITHUB_OUTPUT
+echo "json='$(echo $OUT | base64 -d | jq -rc)'"  >> $GITHUB_OUTPUT
 
 # Base64 decode and extract specific value for output
 export workflowId=$(echo $OUT | base64 -d | jq -r '.workflowId')
 export workflowUrl=$(echo $OUT | base64 -d | jq -r '.workflowUrl')
 export workspaceId=$(echo $OUT | base64 -d | jq -r '.workspaceId')
 export workspaceRef=$(echo $OUT | base64 -d | jq -r '.workspaceRef')
+
+# Hide from the logs for Github Actions. Not crucial but good practice.
+echo "::add-mask::$workflowId"
+echo "::add-mask::$workflowUrl"
+echo "::add-mask::$workspaceId"
+echo "::add-mask::$workspaceRef"
 
 # Export to Github variables
 echo "workflowId=$workflowId" >> $GITHUB_OUTPUT
