@@ -33,7 +33,6 @@ if [ "$WAIT" = false ]; then unset WAIT; fi
 
 # Launch the pipeline
 # We use capture the JSON as variable $OUT. We encode it as base64 to get around Github secrets filters but we still mask it anyway to make sure the details don't leak.
-export OUT
 OUT=$(tw -o json -v \
     launch \
     $PIPELINE \
@@ -47,6 +46,9 @@ OUT=$(tw -o json -v \
     ${NEXTFLOW_CONFIG:+"--config=nextflow.config"} \
     ${WAIT:+"--wait=$WAIT"} \
     2>> $LOG_FN | tee -a $LOG_FN | base64 -w 0)
+export OUT
+
+echo $OUT
 
 # Catch failed pipeline submission
 [[ -z "$OUT" ]] && { echo "Parameter 1 is empty" ; exit 1; }
