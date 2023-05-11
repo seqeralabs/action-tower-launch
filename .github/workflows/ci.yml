@@ -45,6 +45,24 @@ jobs:
             | 😎 Workflow URL | ${{ steps.runs.outputs.workflowUrl }} |
           comment_tag: towerrun
         if: github.event_name == 'pull_request'
+      
+      - uses: ./
+        id: runfails
+        continue-on-error: true
+        with:
+          pipeline: no_pipeline_exists
+          revision: master
+          workspace_id: ${{ secrets.TOWER_WORKSPACE_ID }}
+          access_token: ${{ secrets.TOWER_ACCESS_TOKEN }}
+          compute_env: ${{ secrets.TOWER_COMPUTE_ENV }}
+          run_name: ${{ github.job }}_${{ github.sha }}
+          workdir: ${{ secrets.AWS_S3_BUCKET }}/work/${{ github.sha }}
+
+      - name: Check Failure
+        if: steps.runfails.outcome == 'failure'
+        run: |
+          echo "Pipeline submission was not caught"
+          exit 1      
 
       - uses: actions/upload-artifact@v3
         with:

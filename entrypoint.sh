@@ -33,7 +33,8 @@ if [ "$WAIT" = false ]; then unset WAIT; fi
 
 # Launch the pipeline
 # We use capture the JSON as variable $OUT. We encode it as base64 to get around Github secrets filters but we still mask it anyway to make sure the details don't leak.
-export OUT=$(tw -o json -v \
+export OUT
+OUT=$(tw -o json -v \
     launch \
     $PIPELINE \
     --params-file=params.json \
