@@ -48,6 +48,9 @@ OUT=$(tw -o json -v \
     ${WAIT:+"--wait=$WAIT"} \
     2>> $LOG_FN | tee -a $LOG_FN | base64 -w 0)
 
+# Catch failed pipeline submission
+[[ -z "$OUT" ]] && { echo "Parameter 1 is empty" ; exit 1; }
+
 # Base64 decode and extract specific value for output
 export workflowId=$(echo $OUT | base64 -d | jq -r '.workflowId')
 export workflowUrl=$(echo $OUT | base64 -d | jq -r '.workflowUrl')
