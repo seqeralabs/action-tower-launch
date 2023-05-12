@@ -50,7 +50,7 @@ jobs:
         id: runfails
         continue-on-error: true
         with:
-          pipeline: no_pipeline_exists
+          pipeline: hello_world
           revision: master
           workspace_id: ${{ secrets.TOWER_WORKSPACE_ID }}
           access_token: ${{ secrets.TOWER_ACCESS_TOKEN }}
