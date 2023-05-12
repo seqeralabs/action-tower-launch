@@ -48,7 +48,6 @@ jobs:
       
       - uses: ./
         id: runfails
-        continue-on-error: true
         with:
           pipeline: no_pipeline_exists
           revision: master
