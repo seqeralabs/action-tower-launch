@@ -45,10 +45,10 @@ OUT=$(tw -o json -v \
     ${PRE_RUN_SCRIPT:+"--pre-run=pre_run.sh"} \
     ${NEXTFLOW_CONFIG:+"--config=nextflow.config"} \
     ${WAIT:+"--wait=$WAIT"} \
-    2>> $LOG_FN | base64 -w 0)
-
+    2>> $LOG_FN | base64 -w 0 || exit 1)
+echo $?
 # Fail if previous step was not successful
-test $? -eq 0 || exit 1
+# test $? -eq 0 || cat $LOG_FN && exit 1
 
 export OUT
 
