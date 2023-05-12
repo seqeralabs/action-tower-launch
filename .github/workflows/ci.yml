@@ -61,7 +61,7 @@ jobs:
       - name: Check Failure
         run: |
           echo "Pipeline status"
-          echo ${{ steps.runfails.conclusion }}
+          echo ${{ steps.runfails.outcome }}
           exit 0
 
       - uses: actions/upload-artifact@v3
