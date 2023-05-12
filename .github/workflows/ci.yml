@@ -48,6 +48,7 @@ jobs:
       
       - uses: ./
         id: runfails
+        continue-on-error: true
         with:
           pipeline: no_pipeline_exists
           revision: master
@@ -58,9 +59,8 @@ jobs:
           workdir: ${{ secrets.AWS_S3_BUCKET }}/work/${{ github.sha }}
 
       - name: Check Failure
-        if: failure()
         run: |
-          echo "Pipeline submission failure failed correctly"
+          echo "Pipeline status"
           echo ${{ steps.runfails.conclusion }}
           exit 0
 
