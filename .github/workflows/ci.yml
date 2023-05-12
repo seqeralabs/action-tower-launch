@@ -59,10 +59,10 @@ jobs:
           workdir: ${{ secrets.AWS_S3_BUCKET }}/work/${{ github.sha }}
 
       - name: Check Failure
+        if: steps.runfails.outcome == 'success'
         run: |
-          echo "Pipeline status"
-          echo ${{ steps.runfails.outcome }}
-          exit 0
+          echo "Failed to catch invalid pipeline submission: ${{ steps.runfails.outcome }}"
+          exit 1
 
       - uses: actions/upload-artifact@v3
         with:
