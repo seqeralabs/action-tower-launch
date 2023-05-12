@@ -58,10 +58,18 @@ jobs:
           workdir: ${{ secrets.AWS_S3_BUCKET }}/work/${{ github.sha }}
 
       - name: Check Failure
-        if: steps.runfails.outcome == 'failure'
+        if: failure()
         run: |
-          echo "Pipeline submission was not caught"
-          exit 1      
+          echo "Pipeline submission failure failed correctly"
+          echo ${{ steps.test.conclusion }}
+          exit 0
+
+      - name: Check Failure
+        if: success()
+        run: |
+          echo "Pipeline submission failure was not caught"
+          echo ${{ steps.test.conclusion }}
+          exit 1
 
       - uses: actions/upload-artifact@v3
         with:
