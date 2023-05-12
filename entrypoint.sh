@@ -46,6 +46,7 @@ OUT=$(tw -o json -v \
     ${NEXTFLOW_CONFIG:+"--config=nextflow.config"} \
     ${WAIT:+"--wait=$WAIT"} \
     2>> $LOG_FN | base64 -w 0) || exit 1
+echo $?
 export OUT
 echo $OUT
 # Catch failed pipeline submission
