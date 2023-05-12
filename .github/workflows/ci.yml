@@ -48,6 +48,7 @@ jobs:
       
       - uses: ./
         id: runfails
+        continue-on-error: true
         with:
           pipeline: no_pipeline_exists
           revision: master
@@ -61,14 +62,14 @@ jobs:
         if: failure()
         run: |
           echo "Pipeline submission failure failed correctly"
-          echo ${{ steps.test.conclusion }}
+          echo ${{ steps.runfails.conclusion }}
           exit 0
 
       - name: Check Failure
         if: success()
         run: |
           echo "Pipeline submission failure was not caught"
-          echo ${{ steps.test.conclusion }}
+          echo ${{ steps.runfails.conclusion }}
           exit 1
 
       - uses: actions/upload-artifact@v3
