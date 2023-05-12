@@ -58,7 +58,7 @@ jobs:
           workdir: ${{ secrets.AWS_S3_BUCKET }}/work/${{ github.sha }}
 
       - name: Check Failure
-        if: steps.runfails.conclusion == 'failure'
+        if: failure()
         run: |
           echo "Pipeline submission failure failed correctly"
           echo ${{ steps.runfails.conclusion }}
