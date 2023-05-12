@@ -45,12 +45,7 @@ OUT=$(tw -o json -v \
     ${PRE_RUN_SCRIPT:+"--pre-run=pre_run.sh"} \
     ${NEXTFLOW_CONFIG:+"--config=nextflow.config"} \
     ${WAIT:+"--wait=$WAIT"} \
-    2>> $LOG_FN | base64 -w 0) || exit 1
-echo $?
-export OUT
-echo $OUT
-# Catch failed pipeline submission
-[[ -z "$OUT" ]] && { echo "Output JSON is empty" ; exit 1; }
+    2>> $LOG_FN | base64 -w 0)
 
 # Base64 decode and extract specific value for output
 export workflowId=$(echo $OUT | base64 -d | jq -r '.workflowId')
