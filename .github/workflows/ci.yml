@@ -32,6 +32,7 @@ jobs:
           workdir: ${{ secrets.AWS_S3_BUCKET }}/work/${{ github.sha }}
 
       - name: Comment PR
+        if: github.event_name == 'pull_request'
         uses: thollander/actions-comment-pull-request@v2
         with:
           message: |
@@ -44,11 +45,10 @@ jobs:
             | 🗂️ Workspace ID | `${{ steps.runs.outputs.workspaceId }}` |
             | 😎 Workflow URL | ${{ steps.runs.outputs.workflowUrl }} |
           comment_tag: towerrun
-        if: github.event_name == 'pull_request'
 
       - name: Comment PR
         uses: thollander/actions-comment-pull-request@v2
-        if: failure()
+        if: failure() && github.event_name == 'pull_request'
         with:
           message: |
             ### :x: Pipeline launch failed
