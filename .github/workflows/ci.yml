@@ -45,7 +45,7 @@ jobs:
             | 😎 Workflow URL | ${{ steps.runs.outputs.workflowUrl }} |
           comment_tag: towerrun
         if: github.event_name == 'pull_request'
-      
+
       - uses: ./
         id: runfails
         continue-on-error: true
@@ -65,11 +65,13 @@ jobs:
           exit 1
 
       - uses: actions/upload-artifact@v3
+        if: success() || failure()
         with:
           name: ${{ github.job }}_run_json
           path: tower_action_*.json
 
       - uses: actions/upload-artifact@v3
+        if: success() || failure()
         with:
           name: Tower debug log file
           path: tower_action_*.log
