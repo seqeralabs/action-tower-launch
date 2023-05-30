@@ -46,6 +46,16 @@ jobs:
           comment_tag: towerrun
         if: github.event_name == 'pull_request'
 
+      - name: Comment PR
+        uses: thollander/actions-comment-pull-request@v2
+        if: failure()
+        with:
+          message: |
+            ### :x: Pipeline launch failed
+
+            The pipeline launch failed. Check the logs uploaded as an artifact for more information.
+          comment_tag: towerrun
+
       - uses: ./
         id: runfails
         continue-on-error: true
