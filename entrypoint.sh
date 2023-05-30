@@ -70,6 +70,6 @@ echo "json='$(echo $OUT | base64 -d | jq -rc)'"  >> $GITHUB_OUTPUT
 sed -i "s/$TOWER_ACCESS_TOKEN/xxxxxx/" $LOG_FN
 
 # Create output json file
-echo $OUT > $LOG_JSON
+echo $OUT | base64 -d > $LOG_JSON
 
 cat $LOG_FN
