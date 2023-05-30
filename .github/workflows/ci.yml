@@ -65,7 +65,7 @@ jobs:
           exit 1
 
       - uses: actions/upload-artifact@v3
-        if: success() || failure()
+        if: success()
         with:
           name: ${{ github.job }}_run_json
           path: tower_action_*.json
