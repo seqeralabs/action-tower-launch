@@ -32,6 +32,7 @@ jobs:
           workdir: ${{ secrets.AWS_S3_BUCKET }}/work/${{ github.sha }}
 
       - name: Comment PR
+        if: github.event_name == 'pull_request'
         uses: thollander/actions-comment-pull-request@v2
         with:
           message: |
@@ -44,8 +45,17 @@ jobs:
             | 🗂️ Workspace ID | `${{ steps.runs.outputs.workspaceId }}` |
             | 😎 Workflow URL | ${{ steps.runs.outputs.workflowUrl }} |
           comment_tag: towerrun
-        if: github.event_name == 'pull_request'
-      
+
+      - name: Comment PR
+        uses: thollander/actions-comment-pull-request@v2
+        if: failure() && github.event_name == 'pull_request'
+        with:
+          message: |
+            ### :x: Pipeline launch failed
+
+            The pipeline launch failed. Check the logs uploaded as an artifact for more information.
+          comment_tag: towerrun
+
       - uses: ./
         id: runfails
         continue-on-error: true
@@ -65,11 +75,13 @@ jobs:
           exit 1
 
       - uses: actions/upload-artifact@v3
+        if: success()
         with:
           name: ${{ github.job }}_run_json
           path: tower_action_*.json
 
       - uses: actions/upload-artifact@v3
+        if: success() || failure()
         with:
           name: Tower debug log file
           path: tower_action_*.log

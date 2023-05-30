@@ -7,8 +7,7 @@ echo "::add-mask::$TOWER_API_ENDPOINT"
 echo "::add-mask::$TOWER_ACCESS_TOKEN"
 echo "::add-mask::$TOWER_COMPUTE_ENV"
 
-# Use `tee` to print just stdout to the console but save stdout + stderr to a file
-LOG_FN="tower_action_"$(date +'%Y_%m_%d-%H_%M')"_.log"
+LOG_FN=tower_action_$(date +'%Y_%m_%d-%H_%M').log
 LOG_JSON="tower_action_"$(uuidgen)".json"
 
 # Manual curl of service-info
@@ -71,4 +70,6 @@ echo "json='$(echo $OUT | base64 -d | jq -rc)'"  >> $GITHUB_OUTPUT
 sed -i "s/$TOWER_ACCESS_TOKEN/xxxxxx/" $LOG_FN
 
 # Create output json file
-echo $OUT > $LOG_JSON
+echo $OUT | base64 -d > $LOG_JSON
+
+cat $LOG_FN

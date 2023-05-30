@@ -1,12 +1,13 @@
 FROM alpine
 
-ARG TOWER_CLI_VERSION="0.7.3"
+ARG TOWER_CLI_VERSION="0.8.0"
 
 # Install Tower CLI
-RUN apk add --no-cache curl ca-certificates jq uuidgen
-RUN curl -L https://github.com/seqeralabs/tower-cli/releases/download/v${TOWER_CLI_VERSION}/tw-${TOWER_CLI_VERSION}-linux-x86_64 > tw
-RUN chmod +x ./tw
-RUN mv tw /usr/local/bin/
+RUN apk add --no-cache curl ca-certificates jq uuidgen \
+    && curl -L https://github.com/seqeralabs/tower-cli/releases/download/v${TOWER_CLI_VERSION}/tw-linux-x86_64 > tw \
+    && chmod +x ./tw \
+    && mv tw /usr/local/bin/ \
+    && tw --version
 
 # Make action script available
 ADD *.sh /

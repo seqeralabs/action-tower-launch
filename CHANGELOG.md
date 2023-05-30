@@ -2,7 +2,17 @@
 
 ## [ dev ]
 
+- Update Tower CLI to v0.8.0 ([#11](https://github.com/seqeralabs/action-tower-launch/pull/11))
+- Fix: Output JSON file not base64 encoded
+- Fix: Additional underscore from log removed
+- Feature: Additional comment to PR if launching fails
+
+## [ 0.7.3 ]
+
 - Feature: Action will now fail if pipeline submission fails ([#2](https://github.com/seqeralabs/action-tower-launch/pull/2))
+
+## [ 0.7.2 ]
+
 - Feature: Add outputs to action [#3](https://github.com/seqeralabs/action-tower-launch/pull/3)
 - CI/CD: Add default test run to confirm correct running [#4](https://github.com/seqeralabs/action-tower-launch/pull/4)
 - Fix: Remove quotes from output strings [#5](https://github.com/seqeralabs/action-tower-launch/pull/5)
