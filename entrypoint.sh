@@ -72,3 +72,5 @@ sed -i "s/$TOWER_ACCESS_TOKEN/xxxxxx/" $LOG_FN
 
 # Create output json file
 echo $OUT > $LOG_JSON
+
+cat $LOG_FN
