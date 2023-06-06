@@ -27,7 +27,6 @@ inputs:
     required: false
   revision:
     description: Pipeline revision (release / branch)
-    default: ${{ github.sha }}
     required: false
   workdir:
     description: Nextflow work directory
