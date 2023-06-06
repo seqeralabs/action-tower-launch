@@ -1,6 +1,8 @@
 #!/bin/sh
 set -euo pipefail
 
+echo $REVISION
+
 # Mask certain variables from Github logs
 echo "::add-mask::$TOWER_WORKSPACE_ID"
 echo "::add-mask::$TOWER_API_ENDPOINT"
