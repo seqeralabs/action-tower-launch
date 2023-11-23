@@ -20,29 +20,59 @@ jobs:
       - uses: actions/checkout@v3
 
       - uses: ./
-        id: runs
+        id: aws_run
         # Use repository secrets for sensitive fields
         with:
           pipeline: hello_world
-          workspace_id: ${{ secrets.TOWER_WORKSPACE_ID }}
+          workspace_id: ${{ secrets.AWS_TOWER_WORKSPACE_ID }}
           access_token: ${{ secrets.TOWER_ACCESS_TOKEN }}
-          compute_env: ${{ secrets.TOWER_COMPUTE_ENV }}
+          compute_env: ${{ secrets.AWS_TOWER_COMPUTE_ENV }}
           run_name: ${{ github.job }}_${{ github.sha }}
           workdir: ${{ secrets.AWS_S3_BUCKET }}/work/${{ github.sha }}
+
+      - uses: ./
+        id: azure_run
+        # Use repository secrets for sensitive fields
+        with:
+          pipeline: hello_world
+          workspace_id: ${{ secrets.AZURE_TOWER_WORKSPACE_ID }}
+          access_token: ${{ secrets.TOWER_ACCESS_TOKEN }}
+          compute_env: ${{ secrets.AZURE_TOWER_COMPUTE_ENV }}
+          run_name: ${{ github.job }}_${{ github.sha }}
+          workdir: ${{ secrets.AZURE_WORK_CONTAINER }}/work/${{ github.sha }}
+
+      - uses: ./
+        id: gcp_run
+        # Use repository secrets for sensitive fields
+        with:
+          pipeline: hello_world
+          workspace_id: ${{ secrets.GCP_TOWER_WORKSPACE_ID }}
+          access_token: ${{ secrets.TOWER_ACCESS_TOKEN }}
+          compute_env: ${{ secrets.GCP_TOWER_COMPUTE_ENV }}
+          run_name: ${{ github.job }}_${{ github.sha }}
+          workdir: ${{ secrets.GCP_BUCKET }}/work/${{ github.sha }}
 
       - name: Comment PR
         if: github.event_name == 'pull_request'
         uses: thollander/actions-comment-pull-request@v2
         with:
           message: |
-            ### 🚀 Pipeline launched, monitor progress [here](${{ steps.runs.outputs.workflowUrl }}).
+            ### 🚀 Pipelines launched
 
             | Name | Info |
             |------|------|
-            | 🔨 Workflow ID | `${{ steps.runs.outputs.workflowId }}` |
-            | 🏠 Workspace | `${{ steps.runs.outputs.workspaceRef }}` |
-            | 🗂️ Workspace ID | `${{ steps.runs.outputs.workspaceId }}` |
-            | 😎 Workflow URL | ${{ steps.runs.outputs.workflowUrl }} |
+            | 🔨 AWS Workflow ID | `${{ steps.aws_run.outputs.workflowId }}` |
+            | 🏠 AWS Workspace | `${{ steps.aws_run.outputs.workspaceRef }}` |
+            | 🗂️ AWS Workspace ID | `${{ steps.aws_run.outputs.workspaceId }}` |
+            | 😎 AWS Workflow URL | ${{ steps.aws_run.outputs.workflowUrl }} |
+            | 🔨 Azure Workflow ID | `${{ steps.azure_run.outputs.workflowId }}` |
+            | 🏠 Azure Workspace | `${{ steps.azure_run.outputs.workspaceRef }}` |
+            | 🗂️ Azure Workspace ID | `${{ steps.azure_run.outputs.workspaceId }}` |
+            | 😎 Azure Workflow URL | ${{ steps.gcp_run.outputs.workflowUrl }} |
+            | 🔨 GCP Workflow ID | `${{ steps.gcp_run.outputs.workflowId }}` |
+            | 🏠 GCP Workspace | `${{ steps.gcp_run.outputs.workspaceRef }}` |
+            | 🗂️ GCP Workspace ID | `${{ steps.gcp_run.outputs.workspaceId }}` |
+            | 😎 GCP Workflow URL | ${{ steps.gcp_run.outputs.workflowUrl }} |
           comment_tag: towerrun
 
       - name: Comment PR
