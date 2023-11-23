@@ -1,6 +1,19 @@
 # seqeralabs/action-tower-launch: Changelog
 
-## [ dev ]
+## [ 2.1.2 ]
+
+- Add testing for all three cloud providers ([#19](https://github.com/seqeralabs/action-tower-launch/pull/19))
+- Update Tower CLI to v0.9.1 ([#20](https://github.com/seqeralabs/action-tower-launch/pull/20))
+
+## [ 2.1.1 ]
+
+- Revert Tower CLI to v0.8.0 ([#17](https://github.com/seqeralabs/action-tower-launch/pull/17))
+
+## [ 2.1.0 ]
+
+- Update Tower CLI to v0.9.0 ([#16](https://github.com/seqeralabs/action-tower-launch/pull/16))
+
+## [ 2.0.0 ]
 
 - Update Tower CLI to v0.8.0 ([#11](https://github.com/seqeralabs/action-tower-launch/pull/11))
 - Fix: Output JSON file not base64 encoded
