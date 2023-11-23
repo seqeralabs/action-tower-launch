@@ -34,7 +34,7 @@ jobs:
         id: azure_run
         # Use repository secrets for sensitive fields
         with:
-          pipeline: hello_world
+          pipeline: hello-azure
           workspace_id: ${{ secrets.AZURE_TOWER_WORKSPACE_ID }}
           access_token: ${{ secrets.TOWER_ACCESS_TOKEN }}
           compute_env: ${{ secrets.AZURE_TOWER_COMPUTE_ENV }}
@@ -45,7 +45,7 @@ jobs:
         id: gcp_run
         # Use repository secrets for sensitive fields
         with:
-          pipeline: hello_world
+          pipeline: hello_gcp
           workspace_id: ${{ secrets.GCP_TOWER_WORKSPACE_ID }}
           access_token: ${{ secrets.TOWER_ACCESS_TOKEN }}
           compute_env: ${{ secrets.GCP_TOWER_COMPUTE_ENV }}
