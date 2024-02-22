@@ -14,10 +14,6 @@ LOG_JSON="tower_action_"$(uuidgen)".json"
 curl https://api.tower.nf/service-info >> $LOG_FN
 echo -e "\n\n------\n\n" >> $LOG_FN
 
-# Health check - print basic settings
-tw -v info \
-    2>> $LOG_FN | tee -a $LOG_FN
-
 # Print the params input to a file
 echo -e "$PARAMETERS" > params.json
 
