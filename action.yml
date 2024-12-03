@@ -34,6 +34,7 @@ inputs:
   parameters:
     description: Pipeline parameters
     required: false
+    default: ''
   profiles:
     description: Nextflow config profiles
     required: false
@@ -74,7 +75,7 @@ runs:
     PIPELINE: ${{ inputs.pipeline }}
     REVISION: ${{ inputs.revision }}
     WORKDIR: ${{ inputs.workdir }}
-    PARAMETERS: ${{ toJson(fromJson(inputs.parameters)) }}
+    PARAMETERS: ${{ inputs.parameters != '' && toJson(fromJson(inputs.parameters)) || '' }}
     CONFIG_PROFILES: ${{ inputs.profiles }}
     RUN_NAME: ${{ inputs.run_name }}
     NEXTFLOW_CONFIG: ${{ inputs.nextflow_config }}
