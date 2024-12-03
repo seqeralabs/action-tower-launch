@@ -1,6 +1,6 @@
 FROM alpine
 
-ARG TOWER_CLI_VERSION="0.9.2"
+ARG TOWER_CLI_VERSION="0.10.3"
 
 # Install Tower CLI
 RUN apk add --no-cache curl ca-certificates jq uuidgen \

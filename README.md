@@ -140,7 +140,7 @@ Default: The revision specified in Tower or the default branch of the repo.
 
 ### `workdir`
 
-**[Required]** Nextflow work directory.
+**[Optional]** Nextflow work directory.
 
 The location that temporary working files should be stored. Must be accessible in the Nextflow Tower compute environment used.
 

@@ -23,34 +23,37 @@ jobs:
         id: aws_run
         # Use repository secrets for sensitive fields
         with:
-          pipeline: hello_world
-          workspace_id: ${{ secrets.AWS_TOWER_WORKSPACE_ID }}
           access_token: ${{ secrets.TOWER_ACCESS_TOKEN }}
+          pipeline: hello-aws
+          workspace_id: ${{ secrets.AWS_TOWER_WORKSPACE_ID }}
           compute_env: ${{ secrets.AWS_TOWER_COMPUTE_ENV }}
           run_name: ${{ github.job }}_${{ github.sha }}
           workdir: ${{ secrets.AWS_S3_BUCKET }}/work/${{ github.sha }}
+          api_endpoint: ${{ secrets.PLATFORM_ENDPOINT }}
 
       - uses: ./
         id: azure_run
         # Use repository secrets for sensitive fields
         with:
+          access_token: ${{ secrets.TOWER_ACCESS_TOKEN }}
           pipeline: hello-azure
           workspace_id: ${{ secrets.AZURE_TOWER_WORKSPACE_ID }}
-          access_token: ${{ secrets.TOWER_ACCESS_TOKEN }}
           compute_env: ${{ secrets.AZURE_TOWER_COMPUTE_ENV }}
           run_name: ${{ github.job }}_${{ github.sha }}
           workdir: ${{ secrets.AZURE_WORK_CONTAINER }}/work/${{ github.sha }}
+          api_endpoint: ${{ secrets.PLATFORM_ENDPOINT }}
 
       - uses: ./
         id: gcp_run
         # Use repository secrets for sensitive fields
         with:
-          pipeline: hello_gcp
-          workspace_id: ${{ secrets.GCP_TOWER_WORKSPACE_ID }}
           access_token: ${{ secrets.TOWER_ACCESS_TOKEN }}
+          pipeline: hello-gcp
+          workspace_id: ${{ secrets.GCP_TOWER_WORKSPACE_ID }}
           compute_env: ${{ secrets.GCP_TOWER_COMPUTE_ENV }}
           run_name: ${{ github.job }}_${{ github.sha }}
           workdir: ${{ secrets.GCP_BUCKET }}/work/${{ github.sha }}
+          api_endpoint: ${{ secrets.PLATFORM_ENDPOINT }}
 
       - name: Comment PR
         if: github.event_name == 'pull_request'

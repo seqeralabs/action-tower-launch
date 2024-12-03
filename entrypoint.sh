@@ -31,7 +31,7 @@ if [ "$WAIT" = false ]; then unset WAIT; fi
 OUT=$(tw -o json -v \
     launch \
     $PIPELINE \
-    --params-file=params.json \
+    ${PARAMETERS:+"--params-file=params.json"} \
     ${WORKDIR:+"--work-dir=$WORKDIR"} \
     ${TOWER_COMPUTE_ENV:+"--compute-env=$TOWER_COMPUTE_ENV"} \
     ${REVISION:+"--revision=$REVISION"} \
