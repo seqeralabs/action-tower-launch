@@ -34,7 +34,6 @@ inputs:
   parameters:
     description: Pipeline parameters
     required: false
-    default: "{}"
   profiles:
     description: Nextflow config profiles
     required: false
