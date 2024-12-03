@@ -30,7 +30,7 @@ inputs:
     required: false
   workdir:
     description: Nextflow work directory
-    required: true
+    required: false
   parameters:
     description: Pipeline parameters
     required: false
