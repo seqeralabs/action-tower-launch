@@ -24,7 +24,7 @@ jobs:
         # Use repository secrets for sensitive fields
         with:
           access_token: ${{ secrets.TOWER_ACCESS_TOKEN }}
-          pipeline: hello_world
+          pipeline: hello-aws
           workspace_id: ${{ secrets.AWS_TOWER_WORKSPACE_ID }}
           compute_env: ${{ secrets.AWS_TOWER_COMPUTE_ENV }}
           run_name: ${{ github.job }}_${{ github.sha }}
@@ -48,7 +48,7 @@ jobs:
         # Use repository secrets for sensitive fields
         with:
           access_token: ${{ secrets.TOWER_ACCESS_TOKEN }}
-          pipeline: hello_gcp
+          pipeline: hello-gcp
           workspace_id: ${{ secrets.GCP_TOWER_WORKSPACE_ID }}
           compute_env: ${{ secrets.GCP_TOWER_COMPUTE_ENV }}
           run_name: ${{ github.job }}_${{ github.sha }}
