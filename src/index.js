@@ -173,7 +173,8 @@ async function run() {
     core.error(`Error: ${error.message}`);
     
     // Additional debugging information
-    if (error.stack && core.getBooleanInput('debug')) {
+    const isDebug = process.env.NODE_ENV === 'test' ? false : core.getBooleanInput('debug');
+    if (error.stack && isDebug) {
       core.error(`Stack trace: ${error.stack}`);
     }
     
