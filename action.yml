@@ -1,7 +1,7 @@
-name: action-tower-launch
+name: action-seqera-launch
 author: Phil Ewels
 
-description: Launch a workflow using Nextflow Tower (https://cloud.seqera.io/)
+description: Launch a workflow using Seqera Platform (https://cloud.seqera.io/)
 
 branding:
   icon: "play"
@@ -9,16 +9,16 @@ branding:
 
 inputs:
   access_token:
-    description: Nextflow Tower access token
+    description: Seqera Platform access token (supports both SEQERA_ACCESS_TOKEN and TOWER_ACCESS_TOKEN secrets for compatibility)
     required: true
   compute_env:
-    description: Nextflow Tower compute env
+    description: Seqera Platform compute environment name
     required: false
   workspace_id:
-    description: Nextflow Tower workspace ID
+    description: Seqera Platform workspace ID
     required: false
   api_endpoint:
-    description: Tower API URL
+    description: Seqera Platform API URL
     required: false
     default: https://api.cloud.seqera.io
   pipeline:
@@ -39,7 +39,7 @@ inputs:
     description: Nextflow config profiles
     required: false
   run_name:
-    description: Nextflow Tower Run Name
+    description: Seqera Platform run name
     required: false
   nextflow_config:
     description: Nextflow config options
@@ -47,37 +47,30 @@ inputs:
   pre_run_script:
     description: Pre-run script before launch
     required: false
+  labels:
+    description: Workflow labels (comma-separated)
+    required: false
   wait:
     description: Set GitHub action to wait for pipeline completion
+    default: false
+    required: false
+  debug:
+    description: Enable debug logging for troubleshooting
     default: false
     required: false
 
 outputs:
   json:
-    description: JSON from tw launch with workflowID, workflowUrl, workspaceId, workspaceRef
+    description: JSON from Seqera Platform launch with workflowID, workflowUrl, workspaceId, workspaceRef
   workflowId:
-    description: Unique ID of the pipeline run in Nextflow Tower.
+    description: Unique ID of the pipeline run in Seqera Platform.
   workflowUrl:
-    description: URL to pipeline run in Nextflow Tower.
+    description: URL to pipeline run in Seqera Platform.
   workspaceId:
-    description: Unique ID of workspace in Nextflow Tower in which the pipeline is running.
+    description: Unique ID of workspace in Seqera Platform in which the pipeline is running.
   workspaceRef:
-    description: Human readable format of workspace in Nextflow tower in format '[ organisation / workspace ]'.
+    description: Human readable format of workspace in Seqera Platform in format '[ organisation / workspace ]'.
 
 runs:
-  using: "docker"
-  image: Dockerfile
-  env:
-    TOWER_WORKSPACE_ID: ${{ inputs.workspace_id }}
-    TOWER_API_ENDPOINT: ${{ inputs.api_endpoint }}
-    TOWER_ACCESS_TOKEN: ${{ inputs.access_token }}
-    TOWER_COMPUTE_ENV: ${{ inputs.compute_env }}
-    PIPELINE: ${{ inputs.pipeline }}
-    REVISION: ${{ inputs.revision }}
-    WORKDIR: ${{ inputs.workdir }}
-    PARAMETERS: ${{ inputs.parameters != '' && toJson(fromJson(inputs.parameters)) || '' }}
-    CONFIG_PROFILES: ${{ inputs.profiles }}
-    RUN_NAME: ${{ inputs.run_name }}
-    NEXTFLOW_CONFIG: ${{ inputs.nextflow_config }}
-    PRE_RUN_SCRIPT: ${{ inputs.pre_run_script }}
-    WAIT: ${{ inputs.wait }}
+  using: "node20"
+  main: "dist/index.js"

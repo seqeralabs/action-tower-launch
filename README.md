@@ -1,8 +1,10 @@
-# seqeralabs/action-tower-launch
+# seqeralabs/action-seqera-launch
 
-**A GitHub Action to launch a workflow using [Nextflow Tower](https://tower.nf) - <https://tower.nf>.**
+**A GitHub Action to launch a workflow using [Seqera Platform](https://seqera.io) (formerly Nextflow Tower).**
 
-This action uses the [Nextflow Tower CLI](https://github.com/seqeralabs/tower-cli/).
+This action uses the Seqera Platform REST API directly for fast, reliable workflow launches.
+
+> **✨ Version 3.0+**: Now a lightweight JavaScript action! No more Docker containers - 99% smaller and instant startup.
 
 Contributed with ❤️ from the [@nf-core](https://github.com/nf-core/) community.
 
@@ -10,7 +12,7 @@ Contributed with ❤️ from the [@nf-core](https://github.com/nf-core/) communi
 
 ### Minimal example
 
-This runs the current GitHub repository pipeline on [Nextflow Tower](https://tower.nf) at the current commit hash when pushed to the `dev` branch. The workflow runs on the user's personal workspace.
+This runs the current GitHub repository pipeline on [Seqera Platform](https://cloud.seqera.io) at the current commit hash when pushed to the `dev` branch. The workflow runs on the user's personal workspace.
 
 ```yaml
 on:
@@ -18,25 +20,25 @@ on:
     branches: [dev]
 
 jobs:
-  run-tower:
+  run-seqera:
     runs-on: ubuntu-latest
     steps:
-      - uses: seqeralabs/action-tower-launch@v1
+      - uses: seqeralabs/action-seqera-launch@v1
         # Use repository secrets for sensitive fields
         with:
-          access_token: ${{ secrets.TOWER_ACCESS_TOKEN }}
+          access_token: ${{ secrets.SEQERA_ACCESS_TOKEN }}
 ```
 
 ### Complete example
 
 This example never runs automatically, but creates a button under the GitHub repository _Actions_ tab that can be used to manually trigger the workflow.
 
-It runs on a specified installation of Tower, with a specific organisation workspace. It also calls an external pipeline to be run at a pinned version tag.
+It runs on a specified installation of Seqera Platform, with a specific organisation workspace. It also calls an external pipeline to be run at a pinned version tag.
 
 The `--outdir` parameter is used to save results to a separate directory in the AWS bucket and the pipeline uses two config profiles.
 
 ```yaml
-name: Launch on Tower
+name: Launch on Seqera Platform
 
 # Manually trigger the action with a button in GitHub
 # Alternatively, trigger on release / push etc.
@@ -44,19 +46,19 @@ on:
   workflow_dispatch:
 
 jobs:
-  run-tower:
-    name: Launch on Nextflow Tower
+  run-seqera:
+    name: Launch on Seqera Platform
     # Don't try to run on forked repos
     if: github.repository == 'YOUR_USERNAME/REPO'
     runs-on: ubuntu-latest
     steps:
-      - uses: seqeralabs/action-tower-launch@v1
+      - uses: seqeralabs/action-seqera-launch@v1
         # Use repository secrets for sensitive fields
         with:
-          workspace_id: ${{ secrets.TOWER_WORKSPACE_ID }}
-          access_token: ${{ secrets.TOWER_ACCESS_TOKEN }}
-          api_endpoint: ${{ secrets.TOWER_API_ENDPOINT }}
-          compute_env: ${{ secrets.TOWER_COMPUTE_ENV }}
+          workspace_id: ${{ secrets.SEQERA_WORKSPACE_ID }}
+          access_token: ${{ secrets.SEQERA_ACCESS_TOKEN }}
+          api_endpoint: ${{ secrets.SEQERA_API_ENDPOINT }}
+          compute_env: ${{ secrets.SEQERA_COMPUTE_ENV }}
           pipeline: YOUR_USERNAME/REPO
           revision: v1.2.1
           run_name: ${{ github.job }}_${{ github.run_attempt }}
@@ -67,14 +69,14 @@ jobs:
                 "outdir": "${{ secrets.AWS_S3_BUCKET }}/results/${{ github.sha }}"
             }
           # List of pipeline config profiles to use - comma separated list as a string
-          profiles: test,aws_tower
+          profiles: test,aws_seqera
 
       - uses: actions/upload-artifact@v3
         with:
           name: ${{ needs.getdate.outputs.date }}_run_logs
           path: |
-            tower_action_*.log
-            tower_action_*.json
+            seqera_action_*.log
+            seqera_action_*.json
 ```
 
 ## Inputs
@@ -85,11 +87,13 @@ Note that if you are using secrets, these will be screened in the GitHub Actions
 
 ### `access_token`
 
-**[Required]** Nextflow Tower personal access token.
+**[Required]** Seqera Platform personal access token.
 
-Visit <https://tower.nf/tokens> to generate a new access token.
+Visit <https://cloud.seqera.io/tokens> to generate a new access token.
 
-See the [Nextflow Tower documentation for more details](https://help.tower.nf/getting-started/usage/#via-nextflow-run-command):
+See the [Seqera Platform documentation for more details](https://docs.seqera.io/platform/latest/getting-started/):
+
+> **Note:** For backward compatibility, you can still use `secrets.TOWER_ACCESS_TOKEN`, but we recommend updating to `secrets.SEQERA_ACCESS_TOKEN`.
 
 ![workspace ID](img/usage_create_token.png)
 ![workspace ID](img/usage_name_token.png)
@@ -97,9 +101,9 @@ See the [Nextflow Tower documentation for more details](https://help.tower.nf/ge
 
 ### `workspace_id`
 
-**[Optional]** Nextflow Tower workspace ID.
+**[Optional]** Seqera Platform workspace ID.
 
-Nextflow Tower organisations can have multiple _Workspaces_. Use this field to choose a specific workspace.
+Seqera Platform organisations can have multiple _Workspaces_. Use this field to choose a specific workspace.
 
 Default: Your personal user's workspace.
 
@@ -111,13 +115,13 @@ Default: Your primary workspace.
 
 ### `compute_env`
 
-**[Optional]** Nextflow Tower compute environment name _(not ID)_.
+**[Optional]** Seqera Platform compute environment name _(not ID)_.
 
 Default: Your primary compute environment.
 
 ### `api_endpoint`
 
-**[Optional]** Nextflow Tower API URL endpoint.
+**[Optional]** Seqera Platform API URL endpoint.
 
 Default: `api.cloud.seqera.io`
 
@@ -126,7 +130,7 @@ Default: `api.cloud.seqera.io`
 **[Optional]** Workspace pipeline name or full pipeline URL.
 
 For example, `https://github.com/nf-core/sarek`.
-Can also be the name of a preconfigured pipeline in Nextflow Tower.
+Can also be the name of a preconfigured pipeline in Seqera Platform.
 
 Default: The current GitHub repository (`https://github.com/${{github.repository}}`).
 
@@ -136,13 +140,13 @@ Default: The current GitHub repository (`https://github.com/${{github.repository
 
 A pipeline release tag, branch or commit hash.
 
-Default: The revision specified in Tower or the default branch of the repo.
+Default: The revision specified in Seqera Platform or the default branch of the repo.
 
 ### `workdir`
 
 **[Optional]** Nextflow work directory.
 
-The location that temporary working files should be stored. Must be accessible in the Nextflow Tower compute environment used.
+The location that temporary working files should be stored. Must be accessible in the Seqera Platform compute environment used.
 
 ### `parameters`
 
@@ -162,9 +166,9 @@ Pipeline config profiles to use. Should be comma separated without spaces.
 
 ### `run_name`
 
-**[Optional]** Nextflow Tower run name
+**[Optional]** Seqera Platform run name
 
-Provide a name for the run in Nextflow Tower.
+Provide a name for the run in Seqera Platform.
 
 ### `nextflow_config`
 
@@ -174,9 +178,9 @@ Useful to pass custom Nextflow config options to the `tw launch` command e.g.
 
 ```yaml
 jobs:
-  run-tower:
+  run-seqera:
     steps:
-      - uses: seqeralabs/action-tower-launch@v1
+      - uses: seqeralabs/action-seqera-launch@v1
         with:
           nextflow_config: |
             process.errorStrategy = 'retry'
@@ -188,13 +192,13 @@ jobs:
 
 **[Optional]** Pre-run script before launch.
 
-Pre-run script executed before pipeline launch. This would be particularly useful if you wanted to use a different version of Nextflow than the default available in Tower. You can set this in the pipeline Github Actions:
+Pre-run script executed before pipeline launch. This would be particularly useful if you wanted to use a different version of Nextflow than the default available in Seqera Platform. You can set this in the pipeline Github Actions:
 
 ```yaml
 jobs:
-  run-tower:
+  run-seqera:
     steps:
-      - uses: seqeralabs/action-tower-launch@v1
+      - uses: seqeralabs/action-seqera-launch@v1
         with:
           pre_run_script: "export NXF_VER=21.10.3"
           # Truncated..
@@ -208,7 +212,7 @@ The default setting is for GitHub actions to wait until a pipeline runs to compl
 
 ```yaml
 jobs:
-  run-tower:
+  run-seqera:
     steps:
       - uses: nf-core/tower-action@v2
         with:
@@ -216,16 +220,32 @@ jobs:
           # Truncated..
 ```
 
+### `debug`
+
+**[Optional]** Enable debug logging for troubleshooting
+
+Enable detailed debug logging to help troubleshoot issues with the action. When enabled, the action will output additional information about environment variables, Seqera CLI commands, and API connectivity.
+
+```yaml
+jobs:
+  run-seqera:
+    steps:
+      - uses: seqeralabs/action-seqera-launch@v2
+        with:
+          debug: true
+          # Truncated..
+```
+
 ## Outputs
 
 ### Output variables
 
-The action creates the output variable `json` which is a JSON string of metadata created by the Tower API. It looks like this and can be parsed using the built in `fromJSON()` method.
+The action creates the output variable `json` which is a JSON string of metadata created by the Seqera Platform API. It looks like this and can be parsed using the built in `fromJSON()` method.
 
 ```
 {
   "workflowId" : "7f061c344df044",
-  "workflowUrl" : "https://tower.nf/orgs/myorg/workspaces/myworkspace/watch/7f061c344df044",
+  "workflowUrl" : "https://cloud.seqera.io/orgs/myorg/workspaces/myworkspace/watch/7f061c344df044",
   "workspaceId" : 123456789,
   "workspaceRef" : "[myorg / myworkspace]"
 }
@@ -250,16 +270,16 @@ on:
     branches: [dev]
 
 jobs:
-  run-tower:
+  run-seqera:
     runs-on: ubuntu-latest
     # Capture action outputs as outputs for the job
     outputs:
       workflow_id: ${{ steps.run.outputs.workflowId }}
       workspace_id: ${{ steps.run.outputs.workspaceId }}
     steps:
-      - uses: seqeralabs/action-tower-launch@v1
+      - uses: seqeralabs/action-seqera-launch@v1
         with:
-          access_token: ${{ secrets.TOWER_ACCESS_TOKEN }}
+          access_token: ${{ secrets.SEQERA_ACCESS_TOKEN }}
 
       - name: Comment PR
         uses: thollander/actions-comment-pull-request@v2
@@ -271,7 +291,7 @@ jobs:
               - Workspace: ${{ steps.runs.outputs.WorkspaceRef }}
               - Workspace ID: ${{ steps.runs.outputs.workspaceId }}
               - Workflow URL: ${{ steps.runs.outputs.workflowUrl }}
-          comment_tag: towerrun
+          comment_tag: seqerarun
 
       # Capture JSON + logs and save as artifacts
       - uses: actions/upload-artifact@v3
@@ -279,13 +299,13 @@ jobs:
         with:
           name: ${{ needs.getdate.outputs.date }}_run_logs
           path: |
-            tower_action_*.log
-            tower_action_*.json
+            seqera_action_*.log
+            seqera_action_*.json
 
-  # We install the Tower CLI and use the variables to get the details of the pipeline run.
+  # We install the Seqera CLI and use the variables to get the details of the pipeline run.
   get_details:
     runs-on: ubuntu-latest
-    needs: [run-tower]
+    needs: [run-seqera]
     steps:
       - name: Get run details
         run: |
@@ -296,30 +316,74 @@ jobs:
 
           # Use variables with ${{ needs.id.outputs.variable }} syntax
           tw -o json runs view \
-             -w ${{ needs.run-tower.outputs.workspace_id }} \
-             -i ${{ needs.run-tower.outputs.workflow_id }}
+             -w ${{ needs.run-seqera.outputs.workspace_id }} \
+             -i ${{ needs.run-seqera.outputs.workflow_id }}
 ```
 
 ### Files
 
 The action prints normal stdout info-level log messages to the actions console. However, it also saves a verbose log file and an output JSON of job details as a file. We recommend using [`actions/upload-artifact`](https://github.com/actions/upload-artifact) in your GitHub Actions workflow as shown in the examples above, this will then expose this file to be used in subsequent jobs and as a download through the workflow summary page.
 
-The output log file is saved as `tower_action_$(timestamp).log` and can be captured using `actions/upload-artifact using the following settings:
+The output log file is saved as `seqera_action_$(timestamp).log` and can be captured using `actions/upload-artifact using the following settings:
 
 ```yaml
 - uses: actions/upload-artifact@v4
   with:
-    name: Tower debug log file
-    path: tower_action_*.log
+    name: Seqera debug log file
+    path: seqera_action_*.log
 ```
 
-The action writes a JSON file which has the same format as the `outputs.json` used above. This is wrtten to a file called `tower_action_$(uuidgen).json`. It can be captured in a similar manner:
+The action writes a JSON file which has the same format as the `outputs.json` used above. This is wrtten to a file called `seqera_action_$(uuidgen).json`. It can be captured in a similar manner:
 
 ```yaml
 - uses: actions/upload-artifact@v4
   with:
-    name: Tower output JSON file
-    path: tower_action_*.json
+    name: Seqera output JSON file
+    path: seqera_action_*.json
+```
+
+## Troubleshooting
+
+### Action fails silently or with unclear errors
+
+Enable debug logging to get detailed information about what's happening:
+
+```yaml
+- uses: seqeralabs/action-seqera-launch@v2
+  with:
+    debug: true
+    access_token: ${{ secrets.SEQERA_ACCESS_TOKEN }}
+    # ... other inputs
+```
+
+### Common issues and solutions
+
+1. **"HTTP 401: Invalid access token"** - Check that your access token is valid and has the necessary permissions
+2. **"HTTP 403: Insufficient permissions"** - Verify workspace permissions and compute environment access
+3. **"HTTP 404: Not found"** - Check the pipeline URL and workspace ID are correct
+4. **"API connectivity test failed"** - Verify the `api_endpoint` is correct and reachable
+5. **"Missing or null workflowId"** - The API may have returned an error; check the debug logs
+
+### Debug information
+
+The JavaScript action provides comprehensive debug information when `debug: true` is set:
+
+- **API connectivity tests** - Verifies connection to Seqera Platform
+- **Input validation** - Checks all parameters before sending to API  
+- **HTTP request/response details** - Full transparency into API calls
+- **Clear error messages** - Specific guidance for common issues
+
+Example debug output:
+```
+🐛 Debug mode enabled
+Pipeline: https://github.com/nf-core/hello  
+API Endpoint: https://api.cloud.seqera.io
+🔗 Testing API connectivity...
+✅ API connectivity confirmed
+🎯 Launching workflow...
+[DEBUG] Launch URL: https://api.cloud.seqera.io/workflow/launch
+[DEBUG] HTTP Status: 200
+✅ Workflow launched successfully!
 ```
 
 ## Credits
