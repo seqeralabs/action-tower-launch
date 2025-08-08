@@ -121,6 +121,16 @@ class SeqeraPlatformAPI {
       this.debugLog(`Added preRunScript (${inputs.preRunScript.length} chars)`);
     }
     
+    // Handle labels
+    if (inputs.labels) {
+      // Convert comma-separated string to array
+      const labelsArray = inputs.labels.split(',').map(label => label.trim()).filter(label => label.length > 0);
+      if (labelsArray.length > 0) {
+        launch.labels = labelsArray;
+        this.debugLog(`Added labels: ${labelsArray.join(', ')}`);
+      }
+    }
+    
     return { launch };
   }
   

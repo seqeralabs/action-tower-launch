@@ -47,6 +47,9 @@ inputs:
   pre_run_script:
     description: Pre-run script before launch
     required: false
+  labels:
+    description: Workflow labels (comma-separated)
+    required: false
   wait:
     description: Set GitHub action to wait for pipeline completion
     default: false

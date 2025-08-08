@@ -25670,6 +25670,7 @@ async function run() {
       runName: core.getInput('run_name'),
       nextflowConfig: core.getInput('nextflow_config'),
       preRunScript: core.getInput('pre_run_script'),
+      labels: core.getInput('labels'),
       wait: core.getBooleanInput('wait'),
       debug: core.getBooleanInput('debug')
     };
@@ -25689,6 +25690,7 @@ async function run() {
       core.info(`Work Directory: ${inputs.workdir || '<not set>'}`);
       core.info(`Config Profiles: ${inputs.profiles || '<not set>'}`);
       core.info(`Run Name: ${inputs.runName || '<not set>'}`);
+      core.info(`Labels: ${inputs.labels || '<not set>'}`);
       core.info(`Wait: ${inputs.wait}`);
       core.info(`Parameters: ${inputs.parameters ? `${inputs.parameters.length} chars` : '<not set>'}`);
       core.info(`Nextflow Config: ${inputs.nextflowConfig ? `${inputs.nextflowConfig.length} chars` : '<not set>'}`);
@@ -25728,18 +25730,18 @@ async function run() {
       let errorMessage = `Workflow launch failed: ${launchResult.error}`;
       
       if (launchResult.statusCode === 401) {
-        errorMessage += '\\n\\n💡 This usually indicates an invalid or expired access token.';
-        errorMessage += '\\n   Please check that your TOWER_ACCESS_TOKEN secret is valid.';
+        errorMessage += '\n\n💡 This usually indicates an invalid or expired access token.';
+        errorMessage += '\n   Please check that your TOWER_ACCESS_TOKEN secret is valid.';
       } else if (launchResult.statusCode === 403) {
-        errorMessage += '\\n\\n💡 This usually indicates insufficient permissions.';
-        errorMessage += '\\n   Please check workspace permissions and compute environment access.';
+        errorMessage += '\n\n💡 This usually indicates insufficient permissions.';
+        errorMessage += '\n   Please check workspace permissions and compute environment access.';
       } else if (launchResult.statusCode === 404) {
-        errorMessage += '\\n\\n💡 This usually indicates the pipeline or workspace was not found.';
-        errorMessage += '\\n   Please check the pipeline URL and workspace ID.';
+        errorMessage += '\n\n💡 This usually indicates the pipeline or workspace was not found.';
+        errorMessage += '\n   Please check the pipeline URL and workspace ID.';
       }
       
       if (launchResult.details && inputs.debug) {
-        errorMessage += `\\n\\n🐛 Debug details: ${launchResult.details}`;
+        errorMessage += `\n\n🐛 Debug details: ${launchResult.details}`;
       }
       
       throw new Error(errorMessage);
@@ -25816,18 +25818,14 @@ async function run() {
     core.info('🏁 Action completed successfully');
     
   } catch (error) {
-    // Enhanced error reporting
-    core.error('❌ Action failed');
-    core.error(`Error: ${error.message}`);
-    
     // Additional debugging information
     const isDebug = process.env.NODE_ENV === 'test' ? false : core.getBooleanInput('debug');
     if (error.stack && isDebug) {
       core.error(`Stack trace: ${error.stack}`);
     }
     
-    // Set action as failed
-    core.setFailed(error.message);
+    // Set action as failed (this will log the error message once)
+    core.setFailed(`❌ Action failed\n${error.message}`);
   }
 }
 
@@ -25964,6 +25962,16 @@ class SeqeraPlatformAPI {
     if (inputs.preRunScript) {
       launch.preRunScript = inputs.preRunScript;
       this.debugLog(`Added preRunScript (${inputs.preRunScript.length} chars)`);
+    }
+    
+    // Handle labels
+    if (inputs.labels) {
+      // Convert comma-separated string to array
+      const labelsArray = inputs.labels.split(',').map(label => label.trim()).filter(label => label.length > 0);
+      if (labelsArray.length > 0) {
+        launch.labels = labelsArray;
+        this.debugLog(`Added labels: ${labelsArray.join(', ')}`);
+      }
     }
     
     return { launch };

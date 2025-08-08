@@ -22,6 +22,7 @@ async function run() {
       runName: core.getInput('run_name'),
       nextflowConfig: core.getInput('nextflow_config'),
       preRunScript: core.getInput('pre_run_script'),
+      labels: core.getInput('labels'),
       wait: core.getBooleanInput('wait'),
       debug: core.getBooleanInput('debug')
     };
@@ -41,6 +42,7 @@ async function run() {
       core.info(`Work Directory: ${inputs.workdir || '<not set>'}`);
       core.info(`Config Profiles: ${inputs.profiles || '<not set>'}`);
       core.info(`Run Name: ${inputs.runName || '<not set>'}`);
+      core.info(`Labels: ${inputs.labels || '<not set>'}`);
       core.info(`Wait: ${inputs.wait}`);
       core.info(`Parameters: ${inputs.parameters ? `${inputs.parameters.length} chars` : '<not set>'}`);
       core.info(`Nextflow Config: ${inputs.nextflowConfig ? `${inputs.nextflowConfig.length} chars` : '<not set>'}`);
