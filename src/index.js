@@ -1,11 +1,55 @@
 const core = require('@actions/core');
+const fs = require('fs');
+const crypto = require('crypto');
 const { SeqeraPlatformAPI } = require('./seqera-api');
+
+/**
+ * Create log file with timestamp matching entrypoint.sh format
+ */
+function createLogFile() {
+  const now = new Date();
+  const timestamp = now.toISOString()
+    .replace(/T/, '-')
+    .replace(/:/g, '_')
+    .replace(/\..*/, '')
+    .replace(/-/g, '_');
+  return `tower_action_${timestamp}.log`;
+}
+
+/**
+ * Create JSON file with UUID matching entrypoint.sh format
+ */
+function createJsonFile() {
+  const uuid = crypto.randomUUID();
+  return `tower_action_${uuid}.json`;
+}
+
+/**
+ * Write message to log file and console
+ */
+function logMessage(logFile, message, level = 'INFO') {
+  const timestamp = new Date().toISOString();
+  const logEntry = `[${timestamp}] ${level}: ${message}\n`;
+  
+  try {
+    fs.appendFileSync(logFile, logEntry);
+  } catch (error) {
+    core.error(`Failed to write to log file: ${error.message}`);
+  }
+}
 
 /**
  * Main action entry point
  */
 async function run() {
+  let logFile, jsonFile;
+  
   try {
+    // Create log files
+    logFile = createLogFile();
+    jsonFile = createJsonFile();
+    
+    logMessage(logFile, 'Starting Seqera Platform workflow launch', 'INFO');
     core.info('🚀 Starting Seqera Platform workflow launch');
     
     // Get action inputs
@@ -31,9 +75,16 @@ async function run() {
     core.setSecret(inputs.accessToken);
     if (inputs.workspaceId) core.setSecret(inputs.workspaceId);
     
+    // Log input configuration
+    logMessage(logFile, `Pipeline: ${inputs.pipeline}`);
+    logMessage(logFile, `API Endpoint: ${inputs.apiEndpoint}`);
+    logMessage(logFile, `Workspace ID: ${inputs.workspaceId || '<not set>'}`);
+    logMessage(logFile, `Compute Environment: ${inputs.computeEnv || '<not set>'}`);
+    
     // Debug mode logging
     if (inputs.debug) {
       core.info('🐛 Debug mode enabled');
+      logMessage(logFile, 'Debug mode enabled', 'DEBUG');
       core.info(`Pipeline: ${inputs.pipeline}`);
       core.info(`API Endpoint: ${inputs.apiEndpoint}`);
       core.info(`Workspace ID: ${inputs.workspaceId || '<not set>'}`);
@@ -77,14 +128,18 @@ async function run() {
     
     // Test API connectivity
     core.info('🔗 Testing API connectivity...');
+    logMessage(logFile, 'Testing API connectivity...');
     const connectionTest = await apiClient.testConnection();
     if (!connectionTest.success) {
+      logMessage(logFile, `API connectivity test failed: ${connectionTest.error}`, 'ERROR');
       throw new Error(`API connectivity test failed: ${connectionTest.error}`);
     }
     core.info('✅ API connectivity confirmed');
+    logMessage(logFile, 'API connectivity confirmed');
     
     // Launch the workflow
     core.info('🎯 Launching workflow...');
+    logMessage(logFile, 'Launching workflow...');
     const launchResult = await apiClient.launchWorkflow(inputs);
     
     if (!launchResult.success) {
@@ -112,6 +167,7 @@ async function run() {
     const workflowData = launchResult.data;
     core.info(`✅ Workflow launched successfully!`);
     core.info(`📊 Workflow ID: ${workflowData.workflowId}`);
+    logMessage(logFile, `Workflow launched successfully! ID: ${workflowData.workflowId}`);
     
     // Build workflow URL (this might need adjustment based on actual API responses)
     let workflowUrl = workflowData.workflowUrl;
@@ -149,10 +205,29 @@ async function run() {
     });
     
     core.info(`🌐 Workflow URL: ${workflowUrl}`);
+    logMessage(logFile, `Workflow URL: ${workflowUrl}`);
+    
+    // Write JSON output file
+    const jsonOutput = {
+      workflowId: workflowData.workflowId,
+      workflowUrl: workflowUrl,
+      workspaceId: workflowData.workspaceId || inputs.workspaceId || '',
+      workspaceRef: workflowData.workspaceRef || '[personal]',
+      timestamp: new Date().toISOString(),
+      success: true
+    };
+    
+    try {
+      fs.writeFileSync(jsonFile, JSON.stringify(jsonOutput, null, 2));
+      logMessage(logFile, `JSON output written to: ${jsonFile}`);
+    } catch (error) {
+      logMessage(logFile, `Failed to write JSON file: ${error.message}`, 'ERROR');
+    }
     
     // Handle wait functionality
     if (inputs.wait) {
       core.info('⏳ Wait mode enabled - monitoring workflow status...');
+      logMessage(logFile, 'Wait mode enabled - monitoring workflow status...');
       
       const waitResult = await apiClient.waitForCompletion(
         workflowData.workflowId,
@@ -164,22 +239,59 @@ async function run() {
       );
       
       if (!waitResult.success) {
+        logMessage(logFile, `Wait failed: ${waitResult.error}`, 'ERROR');
         throw new Error(`Wait failed: ${waitResult.error}`);
       }
       
       if (waitResult.status === 'COMPLETED') {
         core.info('🎉 Workflow completed successfully!');
+        logMessage(logFile, 'Workflow completed successfully!');
       } else {
+        logMessage(logFile, `Workflow ended with status: ${waitResult.status}`, 'ERROR');
         throw new Error(`Workflow ended with status: ${waitResult.status}`);
       }
     } else {
       core.info('⚡ Launch complete - not waiting for workflow completion');
       core.info('💡 Set wait: true to monitor workflow progress');
+      logMessage(logFile, 'Launch complete - not waiting for workflow completion');
     }
     
     core.info('🏁 Action completed successfully');
+    logMessage(logFile, 'Action completed successfully');
+    
+    // Log final summary
+    logMessage(logFile, '='.repeat(50));
+    logMessage(logFile, 'Action execution completed successfully');
+    logMessage(logFile, `Log file: ${logFile}`);
+    logMessage(logFile, `JSON file: ${jsonFile}`);
+    logMessage(logFile, '='.repeat(50));
     
   } catch (error) {
+    // Log error to file
+    if (logFile) {
+      logMessage(logFile, `Action failed: ${error.message}`, 'ERROR');
+      if (error.stack) {
+        logMessage(logFile, `Stack trace: ${error.stack}`, 'ERROR');
+      }
+      
+      // Write error JSON file
+      if (jsonFile) {
+        const errorOutput = {
+          success: false,
+          error: error.message,
+          timestamp: new Date().toISOString(),
+          stack: error.stack
+        };
+        
+        try {
+          fs.writeFileSync(jsonFile, JSON.stringify(errorOutput, null, 2));
+          logMessage(logFile, `Error JSON output written to: ${jsonFile}`);
+        } catch (writeError) {
+          logMessage(logFile, `Failed to write error JSON file: ${writeError.message}`, 'ERROR');
+        }
+      }
+    }
+    
     // Additional debugging information
     const isDebug = process.env.NODE_ENV === 'test' ? false : core.getBooleanInput('debug');
     if (error.stack && isDebug) {
