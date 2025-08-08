@@ -216,6 +216,22 @@ jobs:
           # Truncated..
 ```
 
+### `debug`
+
+**[Optional]** Enable debug logging for troubleshooting
+
+Enable detailed debug logging to help troubleshoot issues with the action. When enabled, the action will output additional information about environment variables, Tower CLI commands, and API connectivity.
+
+```yaml
+jobs:
+  run-tower:
+    steps:
+      - uses: seqeralabs/action-tower-launch@v2
+        with:
+          debug: true
+          # Truncated..
+```
+
 ## Outputs
 
 ### Output variables
@@ -320,6 +336,45 @@ The action writes a JSON file which has the same format as the `outputs.json` us
   with:
     name: Tower output JSON file
     path: tower_action_*.json
+```
+
+## Troubleshooting
+
+### Action fails silently or with unclear errors
+
+Enable debug logging to get detailed information about what's happening:
+
+```yaml
+- uses: seqeralabs/action-tower-launch@v2
+  with:
+    debug: true
+    access_token: ${{ secrets.TOWER_ACCESS_TOKEN }}
+    # ... other inputs
+```
+
+### Common issues and solutions
+
+1. **"Tower CLI command failed"** - Check that your access token is valid and has the necessary permissions
+2. **"Failed to connect to Tower API"** - Verify the `api_endpoint` is correct and reachable
+3. **"Missing or null workflowId"** - The Tower API may have returned an error; check the uploaded log artifacts
+4. **"Tower CLI not found"** - This indicates an issue with the Docker container build
+
+### Debug artifacts
+
+The action always creates log files that are helpful for debugging:
+- `tower_action_*.log` - Detailed execution log with Tower CLI output
+- `tower_action_*.json` - Structured JSON response from Tower API
+
+Use the `upload-artifact` action to access these files:
+
+```yaml
+- uses: actions/upload-artifact@v4
+  if: always()  # Upload even if the action fails
+  with:
+    name: tower-debug-logs
+    path: |
+      tower_action_*.log
+      tower_action_*.json
 ```
 
 ## Credits
