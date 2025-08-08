@@ -69,20 +69,5 @@ outputs:
     description: Human readable format of workspace in Nextflow tower in format '[ organisation / workspace ]'.
 
 runs:
-  using: "docker"
-  image: Dockerfile
-  env:
-    TOWER_WORKSPACE_ID: ${{ inputs.workspace_id }}
-    TOWER_API_ENDPOINT: ${{ inputs.api_endpoint }}
-    TOWER_ACCESS_TOKEN: ${{ inputs.access_token }}
-    TOWER_COMPUTE_ENV: ${{ inputs.compute_env }}
-    PIPELINE: ${{ inputs.pipeline }}
-    REVISION: ${{ inputs.revision }}
-    WORKDIR: ${{ inputs.workdir }}
-    PARAMETERS: ${{ inputs.parameters != '' && toJson(fromJson(inputs.parameters)) || '' }}
-    CONFIG_PROFILES: ${{ inputs.profiles }}
-    RUN_NAME: ${{ inputs.run_name }}
-    NEXTFLOW_CONFIG: ${{ inputs.nextflow_config }}
-    PRE_RUN_SCRIPT: ${{ inputs.pre_run_script }}
-    WAIT: ${{ inputs.wait }}
-    DEBUG: ${{ inputs.debug }}
+  using: "node20"
+  main: "dist/index.js"

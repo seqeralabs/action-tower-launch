@@ -1,8 +1,10 @@
 # seqeralabs/action-tower-launch
 
-**A GitHub Action to launch a workflow using [Nextflow Tower](https://tower.nf) - <https://tower.nf>.**
+**A GitHub Action to launch a workflow using [Seqera Platform](https://seqera.io) (formerly Nextflow Tower).**
 
-This action uses the [Nextflow Tower CLI](https://github.com/seqeralabs/tower-cli/).
+This action uses the Seqera Platform REST API directly for fast, reliable workflow launches.
+
+> **✨ Version 3.0+**: Now a lightweight JavaScript action! No more Docker containers - 99% smaller and instant startup.
 
 Contributed with ❤️ from the [@nf-core](https://github.com/nf-core/) community.
 
@@ -354,27 +356,32 @@ Enable debug logging to get detailed information about what's happening:
 
 ### Common issues and solutions
 
-1. **"Tower CLI command failed"** - Check that your access token is valid and has the necessary permissions
-2. **"Failed to connect to Tower API"** - Verify the `api_endpoint` is correct and reachable
-3. **"Missing or null workflowId"** - The Tower API may have returned an error; check the uploaded log artifacts
-4. **"Tower CLI not found"** - This indicates an issue with the Docker container build
+1. **"HTTP 401: Invalid access token"** - Check that your access token is valid and has the necessary permissions
+2. **"HTTP 403: Insufficient permissions"** - Verify workspace permissions and compute environment access
+3. **"HTTP 404: Not found"** - Check the pipeline URL and workspace ID are correct
+4. **"API connectivity test failed"** - Verify the `api_endpoint` is correct and reachable
+5. **"Missing or null workflowId"** - The API may have returned an error; check the debug logs
 
-### Debug artifacts
+### Debug information
 
-The action always creates log files that are helpful for debugging:
-- `tower_action_*.log` - Detailed execution log with Tower CLI output
-- `tower_action_*.json` - Structured JSON response from Tower API
+The JavaScript action provides comprehensive debug information when `debug: true` is set:
 
-Use the `upload-artifact` action to access these files:
+- **API connectivity tests** - Verifies connection to Seqera Platform
+- **Input validation** - Checks all parameters before sending to API  
+- **HTTP request/response details** - Full transparency into API calls
+- **Clear error messages** - Specific guidance for common issues
 
-```yaml
-- uses: actions/upload-artifact@v4
-  if: always()  # Upload even if the action fails
-  with:
-    name: tower-debug-logs
-    path: |
-      tower_action_*.log
-      tower_action_*.json
+Example debug output:
+```
+🐛 Debug mode enabled
+Pipeline: https://github.com/nf-core/hello  
+API Endpoint: https://api.cloud.seqera.io
+🔗 Testing API connectivity...
+✅ API connectivity confirmed
+🎯 Launching workflow...
+[DEBUG] Launch URL: https://api.cloud.seqera.io/workflow/launch
+[DEBUG] HTTP Status: 200
+✅ Workflow launched successfully!
 ```
 
 ## Credits
