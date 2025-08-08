@@ -13,8 +13,8 @@ on:
 jobs:
   run-tower:
     name: Launch on Nextflow Tower
-    # Don't try to run on forked repos or releases (secrets not configured)
-    if: github.repository == 'seqeralabs/action-tower-launch' && github.event_name != 'release'
+    # Disabled - secrets not configured
+    if: false
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
