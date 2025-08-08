@@ -11,8 +11,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  run-tower:
-    name: Launch on Nextflow Tower
+  run-seqera:
+    name: Launch on Seqera Platform
     # Disabled - secrets not configured
     if: false
     runs-on: ubuntu-latest
@@ -109,10 +109,10 @@ jobs:
         if: success()
         with:
           name: ${{ github.job }}_run_json
-          path: tower_action_*.json
+          path: seqera_action_*.json
 
       - uses: actions/upload-artifact@de65e23aa2b7e23d713bb51fbfcb6d502f8667d8
         if: success() || failure()
         with:
-          name: Tower debug log file
-          path: tower_action_*.log
+          name: Seqera debug log file
+          path: seqera_action_*.log

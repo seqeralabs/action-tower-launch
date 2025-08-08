@@ -25661,7 +25661,7 @@ function createLogFile() {
     .replace(/:/g, '_')
     .replace(/\..*/, '')
     .replace(/-/g, '_');
-  return `tower_action_${timestamp}.log`;
+  return `seqera_action_${timestamp}.log`;
 }
 
 /**
@@ -25669,7 +25669,7 @@ function createLogFile() {
  */
 function createJsonFile() {
   const uuid = crypto.randomUUID();
-  return `tower_action_${uuid}.json`;
+  return `seqera_action_${uuid}.json`;
 }
 
 /**
@@ -25753,14 +25753,14 @@ async function run() {
       throw new Error(`access_token is required and cannot be empty.
 
 💡 Common causes:
-   • Missing TOWER_ACCESS_TOKEN secret in repository settings
+   • Missing SEQERA_ACCESS_TOKEN (or TOWER_ACCESS_TOKEN) secret in repository settings
    • Secret value is empty or contains only whitespace
    • Incorrect secret name in workflow file
    
 📖 To fix this:
    1. Go to your repository Settings → Secrets and variables → Actions
-   2. Add/update TOWER_ACCESS_TOKEN with your Seqera Platform token
-   3. Ensure your workflow uses: access_token: \${{ secrets.TOWER_ACCESS_TOKEN }}`);
+   2. Add/update SEQERA_ACCESS_TOKEN (or TOWER_ACCESS_TOKEN for compatibility) with your Seqera Platform token
+   3. Ensure your workflow uses: access_token: \${{ secrets.SEQERA_ACCESS_TOKEN }}`);
     }
     
     if (!inputs.pipeline) {
@@ -25796,7 +25796,7 @@ async function run() {
       
       if (launchResult.statusCode === 401) {
         errorMessage += '\n\n💡 This usually indicates an invalid or expired access token.';
-        errorMessage += '\n   Please check that your TOWER_ACCESS_TOKEN secret is valid.';
+        errorMessage += '\n   Please check that your SEQERA_ACCESS_TOKEN (or TOWER_ACCESS_TOKEN) secret is valid.';
       } else if (launchResult.statusCode === 403) {
         errorMessage += '\n\n💡 This usually indicates insufficient permissions.';
         errorMessage += '\n   Please check workspace permissions and compute environment access.';

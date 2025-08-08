@@ -227,20 +227,20 @@ describe('Access Token Validation', () => {
     const errorMessage = `access_token is required and cannot be empty.
 
 💡 Common causes:
-   • Missing TOWER_ACCESS_TOKEN secret in repository settings
+   • Missing SEQERA_ACCESS_TOKEN (or TOWER_ACCESS_TOKEN) secret in repository settings
    • Secret value is empty or contains only whitespace
    • Incorrect secret name in workflow file
    
 📖 To fix this:
    1. Go to your repository Settings → Secrets and variables → Actions
-   2. Add/update TOWER_ACCESS_TOKEN with your Seqera Platform token
-   3. Ensure your workflow uses: access_token: \${{ secrets.TOWER_ACCESS_TOKEN }}`;
+   2. Add/update SEQERA_ACCESS_TOKEN (or TOWER_ACCESS_TOKEN for compatibility) with your Seqera Platform token
+   3. Ensure your workflow uses: access_token: \${{ secrets.SEQERA_ACCESS_TOKEN }}`;
     
     expect(errorMessage).toContain('💡 Common causes:');
-    expect(errorMessage).toContain('Missing TOWER_ACCESS_TOKEN secret');
+    expect(errorMessage).toContain('Missing SEQERA_ACCESS_TOKEN (or TOWER_ACCESS_TOKEN) secret');
     expect(errorMessage).toContain('📖 To fix this:');
     expect(errorMessage).toContain('repository Settings → Secrets and variables → Actions');
-    expect(errorMessage).toContain('access_token: ${{ secrets.TOWER_ACCESS_TOKEN }}');
+    expect(errorMessage).toContain('access_token: ${{ secrets.SEQERA_ACCESS_TOKEN }}');
   });
 
   it('should handle labels input processing', () => {

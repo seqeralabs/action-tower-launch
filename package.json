@@ -1,7 +1,7 @@
 {
-  "name": "action-tower-launch",
+  "name": "action-seqera-launch",
   "version": "3.0.0",
-  "description": "Launch Nextflow workflows on Seqera Platform via JavaScript action",
+  "description": "GitHub Action to launch Nextflow workflows on Seqera Platform via JavaScript",
   "main": "dist/index.js",
   "scripts": {
     "build": "ncc build src/index.js -o dist --source-map --license licenses.txt",
@@ -14,7 +14,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/seqeralabs/action-tower-launch.git"
+    "url": "git+https://github.com/seqeralabs/action-seqera-launch.git"
   },
   "keywords": [
     "github-action",
