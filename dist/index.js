@@ -25698,8 +25698,18 @@ async function run() {
     }
     
     // Validate required inputs
-    if (!inputs.accessToken) {
-      throw new Error('access_token is required');
+    if (!inputs.accessToken || inputs.accessToken.trim() === '') {
+      throw new Error(`access_token is required and cannot be empty.
+
+💡 Common causes:
+   • Missing TOWER_ACCESS_TOKEN secret in repository settings
+   • Secret value is empty or contains only whitespace
+   • Incorrect secret name in workflow file
+   
+📖 To fix this:
+   1. Go to your repository Settings → Secrets and variables → Actions
+   2. Add/update TOWER_ACCESS_TOKEN with your Seqera Platform token
+   3. Ensure your workflow uses: access_token: \${{ secrets.TOWER_ACCESS_TOKEN }}`);
     }
     
     if (!inputs.pipeline) {
