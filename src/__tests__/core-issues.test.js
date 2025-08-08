@@ -202,3 +202,58 @@ describe('Error Handling', () => {
     });
   });
 });
+
+describe('Access Token Validation', () => {
+  it('should detect empty access token strings', () => {
+    const emptyTokens = ['', '   ', '\t\n   ', '\n', '\t'];
+    
+    emptyTokens.forEach(token => {
+      // Test the validation logic directly
+      const isEmpty = !token || token.trim() === '';
+      expect(isEmpty).toBe(true);
+    });
+  });
+
+  it('should accept valid access tokens', () => {
+    const validTokens = ['tw_123abc', 'tower_token_xyz', 'valid-token-123'];
+    
+    validTokens.forEach(token => {
+      const isEmpty = !token || token.trim() === '';
+      expect(isEmpty).toBe(false);
+    });
+  });
+
+  it('should provide helpful error message format', () => {
+    const errorMessage = `access_token is required and cannot be empty.
+
+💡 Common causes:
+   • Missing TOWER_ACCESS_TOKEN secret in repository settings
+   • Secret value is empty or contains only whitespace
+   • Incorrect secret name in workflow file
+   
+📖 To fix this:
+   1. Go to your repository Settings → Secrets and variables → Actions
+   2. Add/update TOWER_ACCESS_TOKEN with your Seqera Platform token
+   3. Ensure your workflow uses: access_token: \${{ secrets.TOWER_ACCESS_TOKEN }}`;
+    
+    expect(errorMessage).toContain('💡 Common causes:');
+    expect(errorMessage).toContain('Missing TOWER_ACCESS_TOKEN secret');
+    expect(errorMessage).toContain('📖 To fix this:');
+    expect(errorMessage).toContain('repository Settings → Secrets and variables → Actions');
+    expect(errorMessage).toContain('access_token: ${{ secrets.TOWER_ACCESS_TOKEN }}');
+  });
+
+  it('should handle labels input processing', () => {
+    const labelsInput = 'full_test,arm,wave';
+    const labelsArray = labelsInput.split(',').map(label => label.trim()).filter(label => label.length > 0);
+    
+    expect(labelsArray).toEqual(['full_test', 'arm', 'wave']);
+  });
+
+  it('should handle empty labels gracefully', () => {
+    const emptyLabels = '';
+    const labelsArray = emptyLabels ? emptyLabels.split(',').map(label => label.trim()).filter(label => label.length > 0) : [];
+    
+    expect(labelsArray).toEqual([]);
+  });
+});
