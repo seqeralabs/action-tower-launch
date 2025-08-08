@@ -2,7 +2,8 @@
 node_modules/
 
 # Build outputs
-dist/
+# Note: dist/ must be committed for JavaScript actions to work in GitHub Actions
+# dist/
 
 # Logs
 npm-debug.log*
