@@ -80,18 +80,18 @@ async function run() {
       let errorMessage = `Workflow launch failed: ${launchResult.error}`;
       
       if (launchResult.statusCode === 401) {
-        errorMessage += '\\n\\n💡 This usually indicates an invalid or expired access token.';
-        errorMessage += '\\n   Please check that your TOWER_ACCESS_TOKEN secret is valid.';
+        errorMessage += '\n\n💡 This usually indicates an invalid or expired access token.';
+        errorMessage += '\n   Please check that your TOWER_ACCESS_TOKEN secret is valid.';
       } else if (launchResult.statusCode === 403) {
-        errorMessage += '\\n\\n💡 This usually indicates insufficient permissions.';
-        errorMessage += '\\n   Please check workspace permissions and compute environment access.';
+        errorMessage += '\n\n💡 This usually indicates insufficient permissions.';
+        errorMessage += '\n   Please check workspace permissions and compute environment access.';
       } else if (launchResult.statusCode === 404) {
-        errorMessage += '\\n\\n💡 This usually indicates the pipeline or workspace was not found.';
-        errorMessage += '\\n   Please check the pipeline URL and workspace ID.';
+        errorMessage += '\n\n💡 This usually indicates the pipeline or workspace was not found.';
+        errorMessage += '\n   Please check the pipeline URL and workspace ID.';
       }
       
       if (launchResult.details && inputs.debug) {
-        errorMessage += `\\n\\n🐛 Debug details: ${launchResult.details}`;
+        errorMessage += `\n\n🐛 Debug details: ${launchResult.details}`;
       }
       
       throw new Error(errorMessage);
@@ -168,18 +168,14 @@ async function run() {
     core.info('🏁 Action completed successfully');
     
   } catch (error) {
-    // Enhanced error reporting
-    core.error('❌ Action failed');
-    core.error(`Error: ${error.message}`);
-    
     // Additional debugging information
     const isDebug = process.env.NODE_ENV === 'test' ? false : core.getBooleanInput('debug');
     if (error.stack && isDebug) {
       core.error(`Stack trace: ${error.stack}`);
     }
     
-    // Set action as failed
-    core.setFailed(error.message);
+    // Set action as failed (this will log the error message once)
+    core.setFailed(`❌ Action failed\n${error.message}`);
   }
 }
 
