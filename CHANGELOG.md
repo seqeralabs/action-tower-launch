@@ -4,42 +4,12 @@
 
 **BREAKING CHANGE: Complete architectural rewrite**
 
-### Major Changes
-- **Architecture**: Complete rewrite from Docker-based Tower CLI to native JavaScript action using Seqera Platform REST API
-- **Runtime**: Changed from `runs: docker` to `runs: node20` for faster startup and better integration
-- **API**: Direct REST API integration replacing Tower CLI dependency
-- **Performance**: Significantly improved startup time by eliminating container initialization overhead
-
-### New Features
-- **Enhanced Error Handling**: Structured error messages with detailed troubleshooting guidance
-- **Debug Mode**: Comprehensive debug logging with `debug: true` input
-- **Improved Wait Functionality**: Native workflow status monitoring with configurable timeouts
-- **Better Secret Management**: Native GitHub Actions secret masking using `@actions/core`
-- **API Connectivity Testing**: Built-in connection validation before workflow launch
-- **Input Validation**: Enhanced parameter validation with helpful error messages
-
-### Technical Improvements
-- **Modern JavaScript**: ES6+ with async/await patterns
-- **HTTP Client**: Native `@actions/http-client` replacing curl commands
-- **Testing Framework**: Comprehensive test suite using Vitest with coverage reporting
-- **Code Quality**: ESLint integration with CI/CD pipeline
-- **Build Process**: Webpack bundling via `@vercel/ncc` for optimized distribution
-
-### Compatibility
-- **Backward Compatible**: All inputs and outputs maintain compatibility with v2.x
-- **Legacy Support**: Docker-based approach still available via separate entry points
-- **Migration Path**: Seamless upgrade for existing workflows
-
-### Dependencies
-- **Added**: `@actions/core@^1.10.1`, `@actions/http-client@^2.2.1`
-- **Removed**: Tower CLI binary dependency, Alpine Linux container dependency
-- **Dev Dependencies**: Vitest, ESLint, @vercel/ncc for modern development workflow
-
-### Migration Notes
-- No changes required for existing workflow files
-- `debug: true` now provides much more detailed logging
-- Error messages include specific troubleshooting steps
-- Faster execution due to elimination of Docker overhead
+- **Runtime**: Changed from Docker-based to native JavaScript action (`runs: node20`)
+- **Performance**: Significantly faster startup by eliminating container overhead
+- **Error handling**: Improved error messages with specific troubleshooting guidance  
+- **Debug mode**: Enhanced debug logging with `debug: true` input
+- **Wait functionality**: Better workflow status monitoring with configurable timeouts
+- **Compatibility**: All inputs and outputs remain compatible with v2.x
 
 ## [ 2.1.2 ]
 

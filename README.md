@@ -347,7 +347,7 @@ The action writes a JSON file which has the same format as the `outputs.json` us
 Enable debug logging to get detailed information about what's happening:
 
 ```yaml
-- uses: seqeralabs/action-tower-launch@v2
+- uses: seqeralabs/action-tower-launch@v3
   with:
     debug: true
     access_token: ${{ secrets.TOWER_ACCESS_TOKEN }}
@@ -364,7 +364,7 @@ Enable debug logging to get detailed information about what's happening:
 
 ### Debug information
 
-The JavaScript action provides comprehensive debug information when `debug: true` is set:
+The action provides comprehensive debug information when `debug: true` is set:
 
 - **API connectivity tests** - Verifies connection to Seqera Platform
 - **Input validation** - Checks all parameters before sending to API  
@@ -384,6 +384,33 @@ API Endpoint: https://api.cloud.seqera.io
 ✅ Workflow launched successfully!
 ```
 
+## Development
+
+This action is built as a Node.js action using the Seqera Platform REST API. The main components are:
+
+- **`src/index.js`**: Main action entry point with input validation and orchestration
+- **`src/seqera-api.js`**: Seqera Platform API client for workflow operations  
+- **`dist/index.js`**: Compiled action bundle (auto-generated via `npm run build`)
+
+### Development Commands
+
+```bash
+# Install dependencies
+npm install
+
+# Run tests
+npm test
+npm run test:coverage
+
+# Lint code  
+npm run lint
+
+# Build the action (required before committing)
+npm run build
+```
+
+The `dist/index.js` file must be committed after running `npm run build` as it contains the bundled action code that GitHub executes.
+
 ## Credits
 
-This GitHub Action was written by Phil Ewels ([@ewels](https://github.com/ewels)), with help from and based on earlier work by Gisela Gabernet ([@ggabernet](https://github.com/ggabernet)).
+This GitHub Action was originally written by Phil Ewels ([@ewels](https://github.com/ewels)), with help from and based on earlier work by Gisela Gabernet ([@ggabernet](https://github.com/ggabernet)). The v3.0 JavaScript rewrite was contributed by Edmund Miller ([@edmundmiller](https://github.com/edmundmiller)).
