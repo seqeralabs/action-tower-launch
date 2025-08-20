@@ -94,16 +94,31 @@ class SeqeraPlatformAPI {
     }
     
     if (inputs.profiles) {
-      launch.profile = inputs.profiles;
-      this.debugLog(`Added profile: ${inputs.profiles}`);
+      // Convert comma-separated string to array for configProfiles field
+      const profilesArray = inputs.profiles.split(',').map(profile => profile.trim()).filter(profile => profile.length > 0);
+      if (profilesArray.length > 0) {
+        launch.configProfiles = profilesArray;
+        this.debugLog(`Added configProfiles: ${profilesArray.join(', ')}`);
+      }
     }
     
     // Handle parameters JSON
+    // Only set launch.params if we have meaningful parameters to override
+    // This prevents overriding profile-defined parameters (like 'input' from test profiles)
     if (inputs.parameters) {
       try {
         const params = JSON.parse(inputs.parameters);
-        launch.params = params;
-        this.debugLog(`Added parameters (${Object.keys(params).length} keys)`);
+        // Use paramsText instead of params - Tower creates ephemeral params file
+        // This ensures proper parameter precedence with Nextflow profiles
+        launch.paramsText = JSON.stringify(params);
+        this.debugLog(`Added paramsText (${Object.keys(params).length} keys)`);
+        
+        // Log if we're setting any parameters that commonly come from profiles
+        const profileCommonParams = ['input', 'genome'];
+        const profileOverrides = Object.keys(params).filter(key => profileCommonParams.includes(key));
+        if (profileOverrides.length > 0) {
+          this.debugLog(`Note: Overriding profile parameters: ${profileOverrides.join(', ')}`);
+        }
       } catch (error) {
         throw new Error(`Invalid parameters JSON: ${error.message}`);
       }

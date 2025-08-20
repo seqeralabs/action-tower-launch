@@ -98,6 +98,7 @@ describe('Seqera Platform API Tests', () => {
       expect(payload.launch.pipeline).toBe('https://github.com/nf-core/hello');
       expect(payload.launch.computeEnvId).toBe('my-compute-env');
       expect(payload.launch.revision).toBe('main');
+      expect(payload.launch.configProfiles).toEqual(['docker', 'test']);
     });
 
     it('should handle empty parameters gracefully', () => {
@@ -117,6 +118,78 @@ describe('Seqera Platform API Tests', () => {
 
       // Should throw error for invalid JSON
       expect(() => api.buildLaunchPayload(inputs)).toThrow('Invalid parameters JSON');
+    });
+
+    it('should always set parameters when provided', () => {
+      const inputs = {
+        pipeline: 'https://github.com/nf-core/rnaseq',
+        profiles: 'test_full_aws',
+        parameters: '{"hook_url": "https://webhook.example.com", "outdir": "s3://bucket/results"}'
+      };
+
+      const payload = api.buildLaunchPayload(inputs);
+
+      expect(payload.launch.pipeline).toBe('https://github.com/nf-core/rnaseq');
+      expect(payload.launch.configProfiles).toEqual(['test_full_aws']);
+      // Should set all provided parameters as JSON string in paramsText
+      expect(payload.launch.paramsText).toBe(JSON.stringify({ 
+        hook_url: 'https://webhook.example.com',
+        outdir: 's3://bucket/results'
+      }));
+    });
+
+    it('should set all parameters including profile overrides', () => {
+      const inputs = {
+        pipeline: 'https://github.com/nf-core/rnaseq',
+        profiles: 'test',
+        parameters: '{"input": "custom_samplesheet.csv", "outdir": "results/", "aligner": "star_salmon"}'
+      };
+
+      const payload = api.buildLaunchPayload(inputs);
+
+      expect(payload.launch.pipeline).toBe('https://github.com/nf-core/rnaseq');
+      expect(payload.launch.configProfiles).toEqual(['test']);
+      // Should set all parameters as requested
+      expect(payload.launch.paramsText).toBe(JSON.stringify({
+        input: 'custom_samplesheet.csv',
+        outdir: 'results/',
+        aligner: 'star_salmon'
+      }));
+    });
+
+    it('should handle single parameter', () => {
+      const inputs = {
+        pipeline: 'https://github.com/nf-core/rnaseq',
+        profiles: 'test_full_aws',
+        parameters: '{"hook_url": "https://webhook.example.com"}'
+      };
+
+      const payload = api.buildLaunchPayload(inputs);
+
+      expect(payload.launch.pipeline).toBe('https://github.com/nf-core/rnaseq');
+      expect(payload.launch.configProfiles).toEqual(['test_full_aws']);
+      // Should set the parameter as requested
+      expect(payload.launch.paramsText).toBe(JSON.stringify({
+        hook_url: 'https://webhook.example.com'
+      }));
+    });
+
+    it('should handle original failing scenario parameters', () => {
+      const inputs = {
+        pipeline: 'https://github.com/nf-core/rnaseq',
+        profiles: 'test_full_aws,docker',
+        parameters: '{"hook_url": "https://webhook.example.com", "outdir": "s3://bucket/output", "aligner": "star_rsem"}'
+      };
+
+      const payload = api.buildLaunchPayload(inputs);
+
+      // Should set all parameters - this is the scenario that was originally failing
+      expect(payload.launch.paramsText).toBe(JSON.stringify({
+        hook_url: 'https://webhook.example.com',
+        outdir: 's3://bucket/output',
+        aligner: 'star_rsem'
+      }));
+      expect(payload.launch.configProfiles).toEqual(['test_full_aws', 'docker']);
     });
   });
 
