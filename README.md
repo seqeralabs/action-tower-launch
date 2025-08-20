@@ -2,9 +2,9 @@
 
 **A GitHub Action to launch a workflow using [Seqera Platform](https://seqera.io) (formerly Nextflow Tower).**
 
-This action uses the Seqera Platform REST API directly for fast, reliable workflow launches.
+This action provides fast, reliable workflow launches with direct platform integration.
 
-> **✨ Version 3.0+**: Now a lightweight JavaScript action! No more Docker containers - 99% smaller and instant startup.
+> **✨ Version 3.0+**: Now a lightweight action! No more Docker containers - 99% smaller and instant startup.
 
 Contributed with ❤️ from the [@nf-core](https://github.com/nf-core/) community.
 
@@ -386,12 +386,6 @@ API Endpoint: https://api.cloud.seqera.io
 
 ## Development
 
-This action is built as a Node.js action using the Seqera Platform REST API. The main components are:
-
-- **`src/index.js`**: Main action entry point with input validation and orchestration
-- **`src/seqera-api.js`**: Seqera Platform API client for workflow operations  
-- **`dist/index.js`**: Compiled action bundle (auto-generated via `npm run build`)
-
 ### Development Commands
 
 ```bash
@@ -409,8 +403,6 @@ npm run lint
 npm run build
 ```
 
-The `dist/index.js` file must be committed after running `npm run build` as it contains the bundled action code that GitHub executes.
-
 ## Credits
 
-This GitHub Action was originally written by Phil Ewels ([@ewels](https://github.com/ewels)), with help from and based on earlier work by Gisela Gabernet ([@ggabernet](https://github.com/ggabernet)). The v3.0 JavaScript rewrite was contributed by Edmund Miller ([@edmundmiller](https://github.com/edmundmiller)).
+This GitHub Action was originally written by Phil Ewels ([@ewels](https://github.com/ewels)), with help from and based on earlier work by Gisela Gabernet ([@ggabernet](https://github.com/ggabernet)). The v3.0 rewrite was contributed by Edmund Miller ([@edmundmiller](https://github.com/edmundmiller)).
