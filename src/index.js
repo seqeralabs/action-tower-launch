@@ -4,7 +4,7 @@ const crypto = require('crypto');
 const { SeqeraPlatformAPI } = require('./seqera-api');
 
 /**
- * Create log file with timestamp matching entrypoint.sh format
+ * Create log file with timestamp
  */
 function createLogFile() {
   const now = new Date();
@@ -13,28 +13,102 @@ function createLogFile() {
     .replace(/:/g, '_')
     .replace(/\..*/, '')
     .replace(/-/g, '_');
-  return `tower_action_${timestamp}.log`;
+  return `platform_action_${timestamp}.log`;
 }
 
 /**
- * Create JSON file with UUID matching entrypoint.sh format
+ * Create JSON file with UUID
  */
 function createJsonFile() {
   const uuid = crypto.randomUUID();
-  return `tower_action_${uuid}.json`;
+  return `platform_action_${uuid}.json`;
 }
 
 /**
- * Write message to log file and console
+ * Logger that writes to both console and file
  */
-function logMessage(logFile, message, level = 'INFO') {
-  const timestamp = new Date().toISOString();
-  const logEntry = `[${timestamp}] ${level}: ${message}\n`;
-  
-  try {
-    fs.appendFileSync(logFile, logEntry);
-  } catch (error) {
-    core.error(`Failed to write to log file: ${error.message}`);
+class Logger {
+  constructor(logFile) {
+    this.logFile = logFile;
+  }
+
+  /**
+   * Write message to log file with timestamp and level
+   */
+  _writeToFile(message, level = 'INFO') {
+    if (!this.logFile) return;
+    
+    const timestamp = new Date().toISOString();
+    const logEntry = `[${timestamp}] ${level}: ${message}\n`;
+    
+    try {
+      fs.appendFileSync(this.logFile, logEntry);
+    } catch (error) {
+      core.error(`Failed to write to log file: ${error.message}`);
+    }
+  }
+
+  /**
+   * Log info message to both console and file
+   */
+  info(message) {
+    core.info(message);
+    this._writeToFile(message, 'INFO');
+  }
+
+  /**
+   * Log error message to both console and file
+   */
+  error(message) {
+    core.error(message);
+    this._writeToFile(message, 'ERROR');
+  }
+
+  /**
+   * Log debug message to both console and file
+   */
+  debug(message) {
+    core.debug(message);
+    this._writeToFile(message, 'DEBUG');
+  }
+
+  /**
+   * Log grouped configuration with consistent formatting
+   */
+  logConfig(title, configs) {
+    core.startGroup(title);
+    this._writeToFile(`=== ${title} ===`);
+    
+    configs.forEach(({ label, value, truncate = false }) => {
+      let displayValue = value || '<not set>';
+      let fileValue = displayValue;
+      
+      if (value && truncate && typeof value === 'string' && value.length > 200) {
+        fileValue = `${value.substring(0, 200)}...`;
+        displayValue = `${value.length} chars`;
+      }
+      
+      const message = `${label}: ${displayValue}`;
+      core.info(message);
+      this._writeToFile(`${label}: ${fileValue}`);
+    });
+    
+    core.endGroup();
+    this._writeToFile(`=== End ${title} ===`);
+  }
+
+  /**
+   * Log separator for file organization
+   */
+  separator(message = '') {
+    const sep = '='.repeat(50);
+    if (message) {
+      this._writeToFile(sep);
+      this._writeToFile(message);
+      this._writeToFile(sep);
+    } else {
+      this._writeToFile(sep);
+    }
   }
 }
 
@@ -42,15 +116,15 @@ function logMessage(logFile, message, level = 'INFO') {
  * Main action entry point
  */
 async function run() {
-  let logFile, jsonFile;
+  let logger, jsonFile;
   
   try {
-    // Create log files
-    logFile = createLogFile();
+    // Create log files and logger
+    const logFile = createLogFile();
     jsonFile = createJsonFile();
+    logger = new Logger(logFile);
     
-    logMessage(logFile, 'Starting Seqera Platform workflow launch', 'INFO');
-    core.info('🚀 Starting Seqera Platform workflow launch');
+    logger.info('🚀 Starting Seqera Platform workflow launch');
     
     // Get action inputs
     const inputs = {
@@ -67,38 +141,31 @@ async function run() {
       nextflowConfig: core.getInput('nextflow_config'),
       preRunScript: core.getInput('pre_run_script'),
       labels: core.getInput('labels'),
-      wait: core.getBooleanInput('wait'),
-      debug: core.getBooleanInput('debug')
+      wait: core.getBooleanInput('wait')
     };
     
-    // Mask sensitive data
+    // Mask sensitive data (access token and workspace ID)
     core.setSecret(inputs.accessToken);
-    if (inputs.workspaceId) core.setSecret(inputs.workspaceId);
-    
-    // Log input configuration
-    logMessage(logFile, `Pipeline: ${inputs.pipeline}`);
-    logMessage(logFile, `API Endpoint: ${inputs.apiEndpoint}`);
-    logMessage(logFile, `Workspace ID: ${inputs.workspaceId || '<not set>'}`);
-    logMessage(logFile, `Compute Environment: ${inputs.computeEnv || '<not set>'}`);
-    
-    // Debug mode logging
-    if (inputs.debug) {
-      core.info('🐛 Debug mode enabled');
-      logMessage(logFile, 'Debug mode enabled', 'DEBUG');
-      core.info(`Pipeline: ${inputs.pipeline}`);
-      core.info(`API Endpoint: ${inputs.apiEndpoint}`);
-      core.info(`Workspace ID: ${inputs.workspaceId || '<not set>'}`);
-      core.info(`Compute Environment: ${inputs.computeEnv || '<not set>'}`);
-      core.info(`Revision: ${inputs.revision || '<not set>'}`);
-      core.info(`Work Directory: ${inputs.workdir || '<not set>'}`);
-      core.info(`Config Profiles: ${inputs.profiles || '<not set>'}`);
-      core.info(`Run Name: ${inputs.runName || '<not set>'}`);
-      core.info(`Labels: ${inputs.labels || '<not set>'}`);
-      core.info(`Wait: ${inputs.wait}`);
-      core.info(`Parameters: ${inputs.parameters ? `${inputs.parameters.length} chars` : '<not set>'}`);
-      core.info(`Nextflow Config: ${inputs.nextflowConfig ? `${inputs.nextflowConfig.length} chars` : '<not set>'}`);
-      core.info(`Pre-run Script: ${inputs.preRunScript ? `${inputs.preRunScript.length} chars` : '<not set>'}`);
+    if (inputs.workspaceId) {
+      core.setSecret(inputs.workspaceId);
     }
+    
+    // Always show configuration info using unified logging with GitHub groups
+    logger.logConfig('📋 Configuration', [
+      { label: 'Pipeline', value: inputs.pipeline },
+      { label: 'API Endpoint', value: inputs.apiEndpoint },
+      { label: 'Workspace ID', value: inputs.workspaceId },
+      { label: 'Compute Environment', value: inputs.computeEnv },
+      { label: 'Revision', value: inputs.revision },
+      { label: 'Work Directory', value: inputs.workdir },
+      { label: 'Config Profiles', value: inputs.profiles },
+      { label: 'Run Name', value: inputs.runName },
+      { label: 'Labels', value: inputs.labels },
+      { label: 'Wait', value: inputs.wait?.toString() },
+      { label: 'Parameters', value: inputs.parameters, truncate: true },
+      { label: 'Nextflow Config', value: inputs.nextflowConfig, truncate: true },
+      { label: 'Pre-run Script', value: inputs.preRunScript, truncate: true }
+    ]);
     
     // Validate required inputs
     if (!inputs.accessToken || inputs.accessToken.trim() === '') {
@@ -119,27 +186,24 @@ async function run() {
       throw new Error('pipeline is required');
     }
     
-    // Initialize API client
+    // Initialize API client with debug enabled for comprehensive logging
     const apiClient = new SeqeraPlatformAPI({
       baseUrl: inputs.apiEndpoint,
       accessToken: inputs.accessToken,
-      debug: inputs.debug
+      debug: true // Always enable debug for comprehensive logging
     });
     
     // Test API connectivity
-    core.info('🔗 Testing API connectivity...');
-    logMessage(logFile, 'Testing API connectivity...');
+    logger.info('🔗 Testing API connectivity...');
     const connectionTest = await apiClient.testConnection();
     if (!connectionTest.success) {
-      logMessage(logFile, `API connectivity test failed: ${connectionTest.error}`, 'ERROR');
+      logger.error(`API connectivity test failed: ${connectionTest.error}`);
       throw new Error(`API connectivity test failed: ${connectionTest.error}`);
     }
-    core.info('✅ API connectivity confirmed');
-    logMessage(logFile, 'API connectivity confirmed');
+    logger.info('✅ API connectivity confirmed');
     
     // Launch the workflow
-    core.info('🎯 Launching workflow...');
-    logMessage(logFile, 'Launching workflow...');
+    logger.info('🎯 Launching workflow...');
     const launchResult = await apiClient.launchWorkflow(inputs);
     
     if (!launchResult.success) {
@@ -157,7 +221,7 @@ async function run() {
         errorMessage += '\n   Please check the pipeline URL and workspace ID.';
       }
       
-      if (launchResult.details && inputs.debug) {
+      if (launchResult.details) {
         errorMessage += `\n\n🐛 Debug details: ${launchResult.details}`;
       }
       
@@ -165,18 +229,34 @@ async function run() {
     }
     
     const workflowData = launchResult.data;
-    core.info(`✅ Workflow launched successfully!`);
-    core.info(`📊 Workflow ID: ${workflowData.workflowId}`);
-    logMessage(logFile, `Workflow launched successfully! ID: ${workflowData.workflowId}`);
+    logger.info(`✅ Workflow launched successfully!`);
+    logger.info(`📊 Workflow ID: ${workflowData.workflowId}`);
     
-    // Build workflow URL (this might need adjustment based on actual API responses)
+    // Build workflow URL
     let workflowUrl = workflowData.workflowUrl;
     if (!workflowUrl) {
-      // Construct URL if not provided by API
-      const baseUrl = inputs.apiEndpoint.replace('/api.', '/').replace('/api', '');
-      if (inputs.workspaceId) {
-        workflowUrl = `${baseUrl}/orgs/-/workspaces/${inputs.workspaceId}/watch/${workflowData.workflowId}`;
+      // Construct URL if not provided by API - convert api endpoint to web URL
+      let baseUrl = inputs.apiEndpoint;
+      if (baseUrl.includes('api.cloud.seqera.io')) {
+        baseUrl = baseUrl.replace('api.cloud.seqera.io', 'cloud.seqera.io');
+      } else if (baseUrl.includes('/api')) {
+        baseUrl = baseUrl.replace('/api', '');
+      }
+      
+      // For workspace-specific workflows, we need the workspace info from the API response
+      // Fall back to a simple workflow URL if we don't have org/workspace details
+      if (inputs.workspaceId && workflowData.workspaceRef && workflowData.workspaceRef !== '[personal]') {
+        // Try to parse org from workspaceRef format like "[org / workspace]"
+        const orgMatch = workflowData.workspaceRef.match(/\[\s*([^/]+)\s*\/\s*([^/]+)\s*\]/);
+        if (orgMatch) {
+          const org = orgMatch[1].trim();
+          const workspace = orgMatch[2].trim();
+          workflowUrl = `${baseUrl}/orgs/${org}/workspaces/${workspace}/watch/${workflowData.workflowId}`;
+        } else {
+          workflowUrl = `${baseUrl}/workflow/${workflowData.workflowId}`;
+        }
       } else {
+        // Personal workspace or fallback URL
         workflowUrl = `${baseUrl}/workflow/${workflowData.workflowId}`;
       }
     }
@@ -198,14 +278,13 @@ async function run() {
     // Set GitHub Action outputs
     Object.entries(outputs).forEach(([key, value]) => {
       core.setOutput(key, value);
-      // Mask sensitive values
-      if (key.includes('Id') && value) {
+      // Only mask workspace ID (not workflow ID - it's needed for URLs)
+      if (key === 'workspaceId' && value) {
         core.setSecret(value);
       }
     });
     
-    core.info(`🌐 Workflow URL: ${workflowUrl}`);
-    logMessage(logFile, `Workflow URL: ${workflowUrl}`);
+    logger.info(`🌐 Workflow URL: ${workflowUrl}`);
     
     // Write JSON output file
     const jsonOutput = {
@@ -219,15 +298,14 @@ async function run() {
     
     try {
       fs.writeFileSync(jsonFile, JSON.stringify(jsonOutput, null, 2));
-      logMessage(logFile, `JSON output written to: ${jsonFile}`);
+      logger.debug(`JSON output written to: ${jsonFile}`);
     } catch (error) {
-      logMessage(logFile, `Failed to write JSON file: ${error.message}`, 'ERROR');
+      logger.error(`Failed to write JSON file: ${error.message}`);
     }
     
     // Handle wait functionality
     if (inputs.wait) {
-      core.info('⏳ Wait mode enabled - monitoring workflow status...');
-      logMessage(logFile, 'Wait mode enabled - monitoring workflow status...');
+      logger.info('⏳ Wait mode enabled - monitoring workflow status...');
       
       const waitResult = await apiClient.waitForCompletion(
         workflowData.workflowId,
@@ -239,39 +317,32 @@ async function run() {
       );
       
       if (!waitResult.success) {
-        logMessage(logFile, `Wait failed: ${waitResult.error}`, 'ERROR');
+        logger.error(`Wait failed: ${waitResult.error}`);
         throw new Error(`Wait failed: ${waitResult.error}`);
       }
       
       if (waitResult.status === 'COMPLETED') {
-        core.info('🎉 Workflow completed successfully!');
-        logMessage(logFile, 'Workflow completed successfully!');
+        logger.info('🎉 Workflow completed successfully!');
       } else {
-        logMessage(logFile, `Workflow ended with status: ${waitResult.status}`, 'ERROR');
+        logger.error(`Workflow ended with status: ${waitResult.status}`);
         throw new Error(`Workflow ended with status: ${waitResult.status}`);
       }
     } else {
-      core.info('⚡ Launch complete - not waiting for workflow completion');
-      core.info('💡 Set wait: true to monitor workflow progress');
-      logMessage(logFile, 'Launch complete - not waiting for workflow completion');
+      logger.info('⚡ Launch complete - not waiting for workflow completion');
+      logger.info('💡 Set wait: true to monitor workflow progress');
     }
     
-    core.info('🏁 Action completed successfully');
-    logMessage(logFile, 'Action completed successfully');
+    logger.info('🏁 Action completed successfully');
     
-    // Log final summary
-    logMessage(logFile, '='.repeat(50));
-    logMessage(logFile, 'Action execution completed successfully');
-    logMessage(logFile, `Log file: ${logFile}`);
-    logMessage(logFile, `JSON file: ${jsonFile}`);
-    logMessage(logFile, '='.repeat(50));
+    // Log final summary to file
+    logger.separator('Action execution completed successfully');
     
   } catch (error) {
-    // Log error to file
-    if (logFile) {
-      logMessage(logFile, `Action failed: ${error.message}`, 'ERROR');
+    // Log error using unified logger
+    if (logger) {
+      logger.error(`Action failed: ${error.message}`);
       if (error.stack) {
-        logMessage(logFile, `Stack trace: ${error.stack}`, 'ERROR');
+        logger.debug(`Stack trace: ${error.stack}`);
       }
       
       // Write error JSON file
@@ -285,17 +356,13 @@ async function run() {
         
         try {
           fs.writeFileSync(jsonFile, JSON.stringify(errorOutput, null, 2));
-          logMessage(logFile, `Error JSON output written to: ${jsonFile}`);
+          logger.debug(`Error JSON output written to: ${jsonFile}`);
         } catch (writeError) {
-          logMessage(logFile, `Failed to write error JSON file: ${writeError.message}`, 'ERROR');
+          logger.error(`Failed to write error JSON file: ${writeError.message}`);
         }
       }
-    }
-    
-    // Additional debugging information
-    const isDebug = process.env.NODE_ENV === 'test' ? false : core.getBooleanInput('debug');
-    if (error.stack && isDebug) {
-      core.error(`Stack trace: ${error.stack}`);
+      
+      logger.separator('Action execution failed');
     }
     
     // Set action as failed (this will log the error message once)

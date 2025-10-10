@@ -75,8 +75,8 @@ jobs:
         with:
           name: ${{ needs.getdate.outputs.date }}_run_logs
           path: |
-            tower_action_*.log
-            tower_action_*.json
+            platform_action_*.log
+            platform_action_*.json
 ```
 
 ## Inputs
@@ -405,4 +405,4 @@ npm run build
 
 ## Credits
 
-This GitHub Action was originally written by Phil Ewels ([@ewels](https://github.com/ewels)), with help from and based on earlier work by Gisela Gabernet ([@ggabernet](https://github.com/ggabernet)). The v3.0 rewrite was contributed by Edmund Miller ([@edmundmiller](https://github.com/edmundmiller)).
+This GitHub Action was originally written by Phil Ewels ([@ewels](https://github.com/ewels)), with help from and based on earlier work by Gisela Gabernet ([@ggabernet](https://github.com/ggabernet)). The v3.0 JavaScript rewrite was contributed by Edmund Miller ([@edmundmiller](https://github.com/edmundmiller)).
