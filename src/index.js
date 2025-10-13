@@ -286,32 +286,30 @@ async function run() {
       }
     }
 
-    // Set outputs
-    const outputs = {
+    // Prepare output data structure
+    const outputData = {
       workflowId: workflowData.workflowId,
       workflowUrl: workflowUrl,
       workspaceId: workflowData.workspaceId || inputs.workspaceId || '',
       workspaceRef: workflowData.workspaceRef || '[personal]',
     };
-    outputs.json = JSON.stringify(outputs);
 
     // Set GitHub Action outputs
-    Object.entries(outputs).forEach(([key, value]) => {
+    Object.entries(outputData).forEach(([key, value]) => {
       core.setOutput(key, value);
       // Only mask workspace ID (not workflow ID - it's needed for URLs)
       if (key === 'workspaceId' && value) {
         core.setSecret(value);
       }
     });
+    // Add JSON string representation as output
+    core.setOutput('json', JSON.stringify(outputData));
 
     logger.info(`🌐 Workflow URL: ${workflowUrl}`);
 
-    // Write JSON output file
+    // Write JSON output file with additional metadata
     const jsonOutput = {
-      workflowId: workflowData.workflowId,
-      workflowUrl: workflowUrl,
-      workspaceId: workflowData.workspaceId || inputs.workspaceId || '',
-      workspaceRef: workflowData.workspaceRef || '[personal]',
+      ...outputData,
       timestamp: new Date().toISOString(),
       success: true,
     };
