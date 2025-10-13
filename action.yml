@@ -48,7 +48,7 @@ inputs:
     description: Pre-run script before launch
     required: false
   labels:
-    description: Workflow labels (comma-separated). See https://docs.seqera.io/platform-cloud/labels/overview for more information.
+    description: Add comma separated labels as workspace-specific free-text annotations, see https://docs.seqera.io/platform-cloud/labels/overview for more information.
     required: false
   wait:
     description: Set GitHub action to wait for pipeline completion
