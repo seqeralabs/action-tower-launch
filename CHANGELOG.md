@@ -2,7 +2,7 @@
 
 ## [ 3.0.0 ] - 2024-XX-XX
 
-**BREAKING CHANGE: Complete architectural rewrite**
+**BREAKING CHANGE: Rewrite to Javascript for native Github Actions integration**
 
 - **Runtime**: Changed from Docker-based to native JavaScript action (`runs: node20`)
 - **Performance**: Significantly faster startup by eliminating container overhead
