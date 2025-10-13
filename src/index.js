@@ -292,13 +292,8 @@ async function run() {
       workflowUrl: workflowUrl,
       workspaceId: workflowData.workspaceId || inputs.workspaceId || '',
       workspaceRef: workflowData.workspaceRef || '[personal]',
-      json: JSON.stringify({
-        workflowId: workflowData.workflowId,
-        workflowUrl: workflowUrl,
-        workspaceId: workflowData.workspaceId || inputs.workspaceId || '',
-        workspaceRef: workflowData.workspaceRef || '[personal]',
-      }),
     };
+    outputs.json = JSON.stringify(outputs);
 
     // Set GitHub Action outputs
     Object.entries(outputs).forEach(([key, value]) => {
