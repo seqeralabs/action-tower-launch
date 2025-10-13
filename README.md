@@ -4,7 +4,7 @@
 
 This action provides fast, reliable workflow launches with direct platform integration.
 
-> **✨ Version 3.0+**: Now a lightweight action! No more Docker containers - 99% smaller and instant startup.
+> **✨ Version 3.0+**: Now a lightweight action!
 
 Contributed with ❤️ from the [@nf-core](https://github.com/nf-core/) community.
 
@@ -367,14 +367,14 @@ Enable debug logging to get detailed information about what's happening:
 The action provides comprehensive debug information when `debug: true` is set:
 
 - **API connectivity tests** - Verifies connection to Seqera Platform
-- **Input validation** - Checks all parameters before sending to API  
+- **Input validation** - Checks all parameters before sending to API
 - **HTTP request/response details** - Full transparency into API calls
 - **Clear error messages** - Specific guidance for common issues
 
 Example debug output:
 ```
 🐛 Debug mode enabled
-Pipeline: https://github.com/nf-core/hello  
+Pipeline: https://github.com/nf-core/hello
 API Endpoint: https://api.cloud.seqera.io
 🔗 Testing API connectivity...
 ✅ API connectivity confirmed
@@ -396,7 +396,7 @@ npm install
 npm test
 npm run test:coverage
 
-# Lint code  
+# Lint code
 npm run lint
 
 # Build the action (required before committing)
