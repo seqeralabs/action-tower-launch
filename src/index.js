@@ -347,7 +347,7 @@ async function run() {
       }
     } else {
       logger.info('⚡ Launch complete - not waiting for workflow completion');
-      logger.info('💡 Set wait: true to monitor workflow progress');
+      logger.info('💡 TipL Set "wait: true" to monitor workflow progress');
     }
 
     logger.info('🏁 Action completed successfully');
