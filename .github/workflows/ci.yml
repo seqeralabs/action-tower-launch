@@ -12,10 +12,8 @@ on:
 
 jobs:
   run-tower:
-    name: Launch on Nextflow Tower
-    # Disabled: Requires TOWER_ACCESS_TOKEN and cloud-specific secrets to be configured
-    # Enable by setting if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
-    if: false
+    name: Launch on Nextflow Tower (needs TOWER_ACCESS_TOKEN and cloud-specific secrets)
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
