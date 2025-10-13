@@ -1,11 +1,11 @@
 name: action-tower-launch
-author: Phil Ewels
+author: Edmund Miller
 
 description: Launch a workflow using Nextflow Tower (https://cloud.seqera.io/)
 
 branding:
-  icon: "play"
-  color: "purple"
+  icon: 'play'
+  color: 'purple'
 
 inputs:
   access_token:
@@ -34,7 +34,7 @@ inputs:
   parameters:
     description: Pipeline parameters
     required: false
-    default: ""
+    default: ''
   profiles:
     description: Nextflow config profiles
     required: false
@@ -52,11 +52,7 @@ inputs:
     required: false
   wait:
     description: Set GitHub action to wait for pipeline completion
-    default: "false"
-    required: false
-  debug:
-    description: Enable debug logging for troubleshooting
-    default: "false"
+    default: 'false'
     required: false
 
 outputs:
@@ -72,5 +68,5 @@ outputs:
     description: Human readable format of workspace in Nextflow tower in format '[ organisation / workspace ]'.
 
 runs:
-  using: "node20"
-  main: "dist/index.js"
+  using: 'node20'
+  main: 'dist/index.js'

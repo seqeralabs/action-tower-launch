@@ -100,8 +100,7 @@ The action uses direct Seqera Platform REST API calls:
 // API client initialization
 const apiClient = new SeqeraPlatformAPI({
   baseUrl: inputs.apiEndpoint,
-  accessToken: inputs.accessToken,
-  debug: inputs.debug
+  accessToken: inputs.accessToken
 });
 
 // Workflow launch
