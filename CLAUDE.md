@@ -14,9 +14,6 @@ This is `action-tower-launch`, a GitHub Action that launches Nextflow workflows 
 - **`src/index.js`**: Main action entry point with input validation, logging, and orchestration
 - **`src/seqera-api.js`**: Seqera Platform API client with workflow launch and monitoring capabilities
 - **`dist/index.js`**: Compiled action bundle (generated via `npm run build`)
-- **Legacy Components** (still present for transition):
-  - `entrypoint.sh`: Previous shell script for Docker-based approach
-  - `Dockerfile`: Previous container definition with Tower CLI
 
 ### Key Flow
 
@@ -27,13 +24,14 @@ This is `action-tower-launch`, a GitHub Action that launches Nextflow workflows 
 5. Action outputs workflow metadata (ID, URL, workspace info) for downstream jobs
 6. Optional: Waits for workflow completion if `wait: true`
 
-### Architecture Transition
+### Architecture Benefits
 
-The action now supports **dual modes**:
-- **Primary**: Native JavaScript action using Seqera Platform REST API (`runs.using: "node20"`)
-- **Legacy**: Docker-based action using Tower CLI (available via separate Docker files)
-
-This allows for backward compatibility while providing better performance and maintainability.
+The action uses a **native JavaScript implementation** with Seqera Platform REST API (`runs.using: "node20"`), providing:
+- **Faster startup**: No container initialization overhead
+- **Better error handling**: Structured error responses with troubleshooting tips
+- **Native GitHub integration**: Direct use of `@actions/core` and `@actions/http-client`
+- **Improved debugging**: Comprehensive logging and debug modes
+- **Easier maintenance**: Standard Node.js development workflow
 
 ## Configuration
 
@@ -48,17 +46,12 @@ This allows for backward compatibility while providing better performance and ma
 - `parameters`: Pipeline parameters as JSON string
 - `wait`: Whether to wait for pipeline completion (default: false)
 
-### Input Processing (JavaScript Action)
-The action directly processes GitHub Action inputs using `@actions/core`:
+### Input Processing
+The action processes GitHub Action inputs using `@actions/core`:
 - Input validation with detailed error messages and troubleshooting tips
 - Automatic secret masking for sensitive inputs (`access_token`, `workspace_id`, etc.)
 - JSON parameter parsing with validation
 - Debug mode with comprehensive logging
-
-### Input Processing (Legacy Shell Script)
-For the legacy Docker approach (`entrypoint.sh`), inputs are passed as environment variables:
-- `TOWER_ACCESS_TOKEN`, `TOWER_WORKSPACE_ID`, `TOWER_API_ENDPOINT`, etc.
-- `PIPELINE`, `REVISION`, `WORKDIR`, `PARAMETERS`, `RUN_NAME`, etc.
 
 ## Development Commands
 
@@ -92,33 +85,17 @@ npm run test:ci        # CI pipeline testing
 npm run lint           # ESLint checks
 ```
 
-### Legacy Docker Development
-```bash
-# Build Docker image
-docker build -t action-tower-launch .
-
-# Test entrypoint script directly
-docker run --rm -it action-tower-launch /bin/sh
-```
-
 ## Security Considerations
 
-### JavaScript Action Security
 - Uses `@actions/core.setSecret()` for automatic secret masking
 - Input validation prevents injection attacks
 - Structured error handling without exposing sensitive data
 - HTTP client with proper authentication headers
-
-### Legacy Security (Docker/Shell)
-- Extensive secret masking throughout the execution flow
-- Secrets are stripped from log files before output
 - Base64 encoding used to prevent accidental secret exposure in JSON output
-- All sensitive environment variables are masked in GitHub Actions logs
 
 ## API Integration
 
-### Seqera Platform REST API
-The JavaScript action uses direct REST API calls:
+The action uses direct Seqera Platform REST API calls:
 ```javascript
 // API client initialization
 const apiClient = new SeqeraPlatformAPI({
@@ -131,18 +108,9 @@ const apiClient = new SeqeraPlatformAPI({
 const launchResult = await apiClient.launchWorkflow(inputs);
 ```
 
-### Legacy Tower CLI Integration
-The Docker action wraps Tower CLI commands:
-```bash
-tw launch $PIPELINE \
-  ${PARAMETERS:+"--params-file=params.json"} \
-  ${WORKDIR:+"--work-dir=$WORKDIR"} \
-  # ... other conditional parameters
-```
-
 ## File Outputs
 
-Both action modes create consistent output files:
+The action creates output files for logging and programmatic access:
 - `tower_action_TIMESTAMP.log`: Verbose execution log with secrets scrubbed
 - `tower_action_UUID.json`: Structured JSON output for programmatic use
 - Both files are designed for artifact upload in GitHub Actions workflows
@@ -172,10 +140,11 @@ The project uses **Vitest** for JavaScript testing with comprehensive coverage:
 - **Mocking**: HTTP requests and GitHub Actions core functions
 
 ### CI/CD Pipeline
-Multi-approach testing strategy:
-- **JavaScript Action**: Unit tests, integration tests, code coverage, and ESLint
-- **Legacy Docker**: Tests against multiple cloud providers (AWS, Azure, GCP) and failure scenarios
-- **Dual Mode Validation**: Ensures both approaches produce consistent results
+Comprehensive testing strategy:
+- **Unit tests**: Core functionality and API client testing
+- **Integration tests**: End-to-end workflow launch scenarios
+- **Code coverage**: Ensuring test quality with coverage reports
+- **Linting**: ESLint for code quality and consistency
 
 ### Version Management
 - **Semantic versioning**: Currently v3.0.0 for the JavaScript rewrite
@@ -199,22 +168,14 @@ const waitResult = await apiClient.waitForCompletion(
 );
 ```
 
-### Output Compatibility
-Both action modes maintain consistent output format for backward compatibility:
+### Output Format
+The action provides structured output for downstream jobs:
 ```json
 {
   "workflowId": "unique-workflow-identifier",
   "workflowUrl": "https://cloud.seqera.io/...",
-  "workspaceId": "workspace-identifier", 
+  "workspaceId": "workspace-identifier",
   "workspaceRef": "[organization/workspace]",
   "json": "base64-encoded-json-for-github-outputs"
 }
 ```
-
-### Migration Benefits
-The JavaScript action provides several advantages over the Docker approach:
-- **Faster startup**: No container initialization overhead
-- **Better error handling**: Structured error responses with troubleshooting tips  
-- **Native GitHub integration**: Direct use of `@actions/core` and `@actions/http-client`
-- **Improved debugging**: Comprehensive logging and debug modes
-- **Easier maintenance**: Standard Node.js development workflow
