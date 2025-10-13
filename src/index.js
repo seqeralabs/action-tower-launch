@@ -39,7 +39,7 @@ class Logger {
   _writeToFile(message, level = 'INFO') {
     if (!this.logFile) return;
 
-    const timestamp = new Date().toISOString();
+    const timestamp = new Date().toISOString().slice(0, 10);
     const logEntry = `[${timestamp}] ${level}: ${message}\n`;
 
     try {
