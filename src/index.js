@@ -271,7 +271,7 @@ async function run() {
       ) {
         // Try to parse org from workspaceRef format like "[org / workspace]"
         const orgMatch = workflowData.workspaceRef.match(
-          /\[\s*([^/]+)\s*\/\s*([^/]+)\s*\]/,
+          /\[\s*([^/]+)\s*\/\s*([^/]+)\s*\]/
         );
         if (orgMatch) {
           const org = orgMatch[1].trim();
@@ -323,7 +323,9 @@ async function run() {
 
     // Handle wait functionality
     if (inputs.wait) {
-      logger.info('⏳ Wait mode enabled - monitoring workflow status...');
+      logger.info(
+        '⏳ Wait mode enabled - monitoring workflow status for up to 30 minutes...'
+      );
 
       const waitResult = await apiClient.waitForCompletion(
         workflowData.workflowId,
@@ -331,7 +333,7 @@ async function run() {
         {
           maxWaitTime: 30 * 60 * 1000, // 30 minutes
           pollInterval: 30 * 1000, // 30 seconds
-        },
+        }
       );
 
       if (!waitResult.success) {
@@ -376,7 +378,7 @@ async function run() {
           logger.debug(`Error JSON output written to: ${jsonFile}`);
         } catch (writeError) {
           logger.error(
-            `Failed to write error JSON file: ${writeError.message}`,
+            `Failed to write error JSON file: ${writeError.message}`
           );
         }
       }
