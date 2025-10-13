@@ -20,6 +20,7 @@
     "github-action",
     "nextflow",
     "seqera",
+    "platform",
     "tower",
     "workflow",
     "bioinformatics"
@@ -32,9 +33,9 @@
   },
   "devDependencies": {
     "@vercel/ncc": "^0.38.1",
-    "vitest": "^2.0.0",
-    "@vitest/coverage-v8": "^2.0.0",
-    "eslint": "^8.57.0"
+    "@vitest/coverage-v8": "^3.2.4",
+    "eslint": "^8.57.0",
+    "vitest": "^3.2.4"
   },
   "engines": {
     "node": ">=20"
