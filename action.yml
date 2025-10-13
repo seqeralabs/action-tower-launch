@@ -34,7 +34,7 @@ inputs:
   parameters:
     description: Pipeline parameters
     required: false
-    default: ''
+    default: ""
   profiles:
     description: Nextflow config profiles
     required: false
@@ -48,15 +48,15 @@ inputs:
     description: Pre-run script before launch
     required: false
   labels:
-    description: Workflow labels (comma-separated)
+    description: Workflow labels (comma-separated). See https://docs.seqera.io/platform-cloud/labels/overview for more information.
     required: false
   wait:
     description: Set GitHub action to wait for pipeline completion
-    default: false
+    default: "false"
     required: false
   debug:
     description: Enable debug logging for troubleshooting
-    default: false
+    default: "false"
     required: false
 
 outputs:
