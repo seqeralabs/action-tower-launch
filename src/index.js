@@ -254,12 +254,12 @@ async function run() {
     // Build workflow URL
     let workflowUrl = workflowData.workflowUrl;
     if (!workflowUrl) {
-      // Construct URL if not provided by API - convert api endpoint to web URL
+      // Construct URL if not provided by API - convert API endpoint to web URL
       let baseUrl = inputs.apiEndpoint;
       if (baseUrl.includes('api.cloud.seqera.io')) {
         baseUrl = baseUrl.replace('api.cloud.seqera.io', 'cloud.seqera.io');
-      } else if (baseUrl.includes('/api')) {
-        baseUrl = baseUrl.replace('/api', '');
+      } else if (baseUrl.endsWith('/api')) {
+        baseUrl = baseUrl.replace(/\/api$/, '');
       }
 
       // For workspace-specific workflows, we need the workspace info from the API response
