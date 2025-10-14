@@ -297,10 +297,6 @@ async function run() {
     // Set GitHub Action outputs
     Object.entries(outputData).forEach(([key, value]) => {
       core.setOutput(key, value);
-      // Only mask workspace ID (not workflow ID - it's needed for URLs)
-      if (key === 'workspaceId' && value) {
-        core.setSecret(value);
-      }
     });
     // Add JSON string representation as output
     core.setOutput('json', JSON.stringify(outputData));
