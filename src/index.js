@@ -155,9 +155,6 @@ async function run() {
 
     // Mask sensitive data (access token and workspace ID)
     core.setSecret(inputs.accessToken);
-    if (inputs.workspaceId) {
-      core.setSecret(inputs.workspaceId);
-    }
 
     // Always show configuration info using unified logging with GitHub groups
     logger.logConfig('📋 Configuration', [
