@@ -11,7 +11,7 @@ class SeqeraPlatformAPI {
     this.accessToken = options.accessToken;
     this.debug = options.debug || false;
     
-    if (!this.accessToken) {
+    if (!this.accessToken || (typeof this.accessToken === 'string' && this.accessToken.trim() === '')) {
       throw new Error('Access token is required');
     }
     
@@ -136,12 +136,11 @@ class SeqeraPlatformAPI {
       this.debugLog(`Added preRunScript (${inputs.preRunScript.length} chars)`);
     }
     
-    // Handle labels
+    // Handle labels - API expects array of objects with name field
     if (inputs.labels) {
-      // Convert comma-separated string to array
       const labelsArray = inputs.labels.split(',').map(label => label.trim()).filter(label => label.length > 0);
       if (labelsArray.length > 0) {
-        launch.labels = labelsArray;
+        launch.labelIds = labelsArray.map(name => ({ name }));
         this.debugLog(`Added labels: ${labelsArray.join(', ')}`);
       }
     }
@@ -241,6 +240,27 @@ class SeqeraPlatformAPI {
   }
   
   /**
+   * Get current user info (for URL construction)
+   */
+  async getUserInfo() {
+    try {
+      const url = `${this.baseUrl}/user-info`;
+      const response = await this.httpClient.get(url);
+      const statusCode = response.message.statusCode;
+      const body = await response.readBody();
+      
+      if (statusCode >= 200 && statusCode < 300) {
+        const data = JSON.parse(body);
+        return { success: true, data: data.user || data };
+      } else {
+        return { success: false, error: `HTTP ${statusCode}` };
+      }
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  }
+  
+  /**
    * Get workflow status (for wait functionality)
    */
   async getWorkflowStatus(workflowId, workspaceId) {
@@ -280,7 +300,7 @@ class SeqeraPlatformAPI {
    * Poll workflow status until completion (for wait functionality)
    */
   async waitForCompletion(workflowId, workspaceId, options = {}) {
-    const maxWaitTime = options.maxWaitTime || 30 * 60 * 1000; // 30 minutes
+    const maxWaitTime = options.maxWaitTime || 6 * 60 * 60 * 1000; // 6 hours
     const pollInterval = options.pollInterval || 30 * 1000; // 30 seconds
     const startTime = Date.now();
     
@@ -293,7 +313,7 @@ class SeqeraPlatformAPI {
         return result;
       }
       
-      const status = result.data.status;
+      const status = result.data.workflow?.status || result.data.status;
       core.info(`Workflow status: ${status}`);
       
       // Check if workflow is complete

@@ -39,7 +39,7 @@ class Logger {
   _writeToFile(message, level = 'INFO') {
     if (!this.logFile) return;
 
-    const timestamp = new Date().toISOString().slice(0, 10);
+    const timestamp = new Date().toISOString().slice(0, 19);
     const logEntry = `[${timestamp}] ${level}: ${message}\n`;
 
     try {
@@ -278,8 +278,17 @@ async function run() {
           workflowUrl = `${baseUrl}/workflow/${workflowData.workflowId}`;
         }
       } else {
-        // Personal workspace or fallback URL
-        workflowUrl = `${baseUrl}/workflow/${workflowData.workflowId}`;
+        // Personal workspace: /user/{username}/watch/{id}
+        try {
+          const userInfo = await apiClient.getUserInfo();
+          if (userInfo.success && userInfo.data.userName) {
+            workflowUrl = `${baseUrl}/user/${userInfo.data.userName}/watch/${workflowData.workflowId}`;
+          } else {
+            workflowUrl = `${baseUrl}/workflow/${workflowData.workflowId}`;
+          }
+        } catch (_err) {
+          workflowUrl = `${baseUrl}/workflow/${workflowData.workflowId}`;
+        }
       }
     }
 
@@ -316,15 +325,13 @@ async function run() {
 
     // Handle wait functionality
     if (inputs.wait) {
-      logger.info(
-        '⏳ Wait mode enabled - monitoring workflow status for up to 30 minutes...'
-      );
+      logger.info('⏳ Wait mode enabled - monitoring workflow status...');
 
       const waitResult = await apiClient.waitForCompletion(
         workflowData.workflowId,
         inputs.workspaceId,
         {
-          maxWaitTime: 30 * 60 * 1000, // 30 minutes
+          maxWaitTime: 6 * 60 * 60 * 1000, // 6 hours (GitHub Actions step limit)
           pollInterval: 30 * 1000, // 30 seconds
         }
       );
@@ -342,7 +349,7 @@ async function run() {
       }
     } else {
       logger.info('⚡ Launch complete - not waiting for workflow completion');
-      logger.info('💡 TipL Set "wait: true" to monitor workflow progress');
+      logger.info('💡 Tip: Set "wait: true" to monitor workflow progress');
     }
 
     logger.info('🏁 Action completed successfully');
@@ -385,8 +392,6 @@ async function run() {
 }
 
 // Run the action
-if (require.main === module) {
-  run();
-}
+run();
 
 module.exports = { run };
