@@ -1,5 +1,5 @@
-const core = require('@actions/core');
-const { HttpClient } = require('@actions/http-client/lib/index');
+import * as core from '@actions/core';
+import { HttpClient } from '@actions/http-client';
 
 /**
  * Seqera Platform API Client
@@ -335,4 +335,4 @@ class SeqeraPlatformAPI {
   }
 }
 
-module.exports = { SeqeraPlatformAPI };
+export { SeqeraPlatformAPI };

@@ -1,7 +1,7 @@
-const core = require('@actions/core');
-const fs = require('fs');
-const crypto = require('crypto');
-const { SeqeraPlatformAPI } = require('./seqera-api');
+import * as core from '@actions/core';
+import fs from 'fs';
+import crypto from 'crypto';
+import { SeqeraPlatformAPI } from './seqera-api.js';
 
 /**
  * Create log file with timestamp matching the old entrypoint.sh format (from v2)
@@ -394,4 +394,4 @@ async function run() {
 // Run the action
 run();
 
-module.exports = { run };
+export { run };

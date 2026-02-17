@@ -5,7 +5,8 @@
  * This simulates the GitHub Actions environment for local testing
  */
 
-const { run } = require('./index');
+import { run } from './index.js';
+import * as core from '@actions/core';
 
 // Mock GitHub Actions environment variables
 process.env.INPUT_ACCESS_TOKEN = process.env.TEST_ACCESS_TOKEN || 'test-token';
@@ -16,9 +17,6 @@ process.env.INPUT_API_ENDPOINT = 'https://api.cloud.seqera.io';
 
 // Mock GitHub repository
 process.env.GITHUB_REPOSITORY = 'test-user/test-repo';
-
-// Mock core functions for testing
-const core = require('@actions/core');
 
 // Override core functions for testing
 const originalSetOutput = core.setOutput;
@@ -58,6 +56,4 @@ async function test() {
 }
 
 // Run the test
-if (require.main === module) {
-  test().catch(console.error);
-}
+test().catch(console.error);

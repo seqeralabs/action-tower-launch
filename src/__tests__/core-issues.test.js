@@ -16,11 +16,13 @@ describe('Seqera Platform API Tests', () => {
     }));
 
     // Mock @actions/http-client
-    vi.mock('@actions/http-client/lib/index', () => ({
-      HttpClient: vi.fn().mockImplementation(() => ({
-        get: vi.fn(),
-        post: vi.fn(),
-      }))
+    vi.mock('@actions/http-client', () => ({
+      HttpClient: vi.fn(function() {
+        return {
+          get: vi.fn(),
+          post: vi.fn(),
+        };
+      })
     }));
 
     // Import after mocking
