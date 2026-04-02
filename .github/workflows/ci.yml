@@ -105,13 +105,13 @@ jobs:
           echo "Failed to catch invalid pipeline submission: ${{ steps.runfails.outcome }}"
           exit 1
 
-      - uses: actions/upload-artifact@de65e23aa2b7e23d713bb51fbfcb6d502f8667d8
+      - uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
         if: success()
         with:
           name: ${{ github.job }}_run_json
           path: tower_action_*.json
 
-      - uses: actions/upload-artifact@de65e23aa2b7e23d713bb51fbfcb6d502f8667d8
+      - uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
         if: success() || failure()
         with:
           name: Tower debug log file
