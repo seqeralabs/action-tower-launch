@@ -12,9 +12,8 @@ on:
 
 jobs:
   run-tower:
-    name: Launch on Nextflow Tower
-    # Don't try to run on forked repos
-    if: github.repository == 'seqeralabs/action-tower-launch'
+    name: Launch on Nextflow Tower (needs TOWER_ACCESS_TOKEN and cloud-specific secrets)
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3
@@ -109,10 +108,10 @@ jobs:
         if: success()
         with:
           name: ${{ github.job }}_run_json
-          path: tower_action_*.json
+          path: platform_action_*.json
 
       - uses: actions/upload-artifact@de65e23aa2b7e23d713bb51fbfcb6d502f8667d8
         if: success() || failure()
         with:
-          name: Tower debug log file
-          path: tower_action_*.log
+          name: Platform debug log file
+          path: platform_action_*.log

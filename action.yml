@@ -1,11 +1,11 @@
 name: action-tower-launch
-author: Phil Ewels
+author: Edmund Miller
 
 description: Launch a workflow using Nextflow Tower (https://cloud.seqera.io/)
 
 branding:
-  icon: "play"
-  color: "purple"
+  icon: 'play'
+  color: 'purple'
 
 inputs:
   access_token:
@@ -47,9 +47,12 @@ inputs:
   pre_run_script:
     description: Pre-run script before launch
     required: false
+  labels:
+    description: Add comma separated labels as workspace-specific free-text annotations, see https://docs.seqera.io/platform-cloud/labels/overview for more information.
+    required: false
   wait:
     description: Set GitHub action to wait for pipeline completion
-    default: false
+    default: 'false'
     required: false
 
 outputs:
@@ -65,19 +68,5 @@ outputs:
     description: Human readable format of workspace in Nextflow tower in format '[ organisation / workspace ]'.
 
 runs:
-  using: "docker"
-  image: Dockerfile
-  env:
-    TOWER_WORKSPACE_ID: ${{ inputs.workspace_id }}
-    TOWER_API_ENDPOINT: ${{ inputs.api_endpoint }}
-    TOWER_ACCESS_TOKEN: ${{ inputs.access_token }}
-    TOWER_COMPUTE_ENV: ${{ inputs.compute_env }}
-    PIPELINE: ${{ inputs.pipeline }}
-    REVISION: ${{ inputs.revision }}
-    WORKDIR: ${{ inputs.workdir }}
-    PARAMETERS: ${{ inputs.parameters != '' && toJson(fromJson(inputs.parameters)) || '' }}
-    CONFIG_PROFILES: ${{ inputs.profiles }}
-    RUN_NAME: ${{ inputs.run_name }}
-    NEXTFLOW_CONFIG: ${{ inputs.nextflow_config }}
-    PRE_RUN_SCRIPT: ${{ inputs.pre_run_script }}
-    WAIT: ${{ inputs.wait }}
+  using: 'node20'
+  main: 'dist/index.js'

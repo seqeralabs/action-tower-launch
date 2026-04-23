@@ -1,8 +1,10 @@
 # seqeralabs/action-tower-launch
 
-**A GitHub Action to launch a workflow using [Nextflow Tower](https://tower.nf) - <https://tower.nf>.**
+**A GitHub Action to launch a workflow using [Seqera Platform](https://seqera.io) (formerly Nextflow Tower).**
 
-This action uses the [Nextflow Tower CLI](https://github.com/seqeralabs/tower-cli/).
+This action provides fast, reliable workflow launches with direct platform integration.
+
+> **✨ Version 3.0+**: Now a lightweight action!
 
 Contributed with ❤️ from the [@nf-core](https://github.com/nf-core/) community.
 
@@ -73,8 +75,8 @@ jobs:
         with:
           name: ${{ needs.getdate.outputs.date }}_run_logs
           path: |
-            tower_action_*.log
-            tower_action_*.json
+            platform_action_*.log
+            platform_action_*.json
 ```
 
 ## Inputs
@@ -216,6 +218,22 @@ jobs:
           # Truncated..
 ```
 
+### `debug`
+
+**[Optional]** Enable debug logging for troubleshooting
+
+Enable detailed debug logging to help troubleshoot issues with the action. When enabled, the action will output additional information about environment variables, Tower CLI commands, and API connectivity.
+
+```yaml
+jobs:
+  run-tower:
+    steps:
+      - uses: seqeralabs/action-tower-launch@v2
+        with:
+          debug: true
+          # Truncated..
+```
+
 ## Outputs
 
 ### Output variables
@@ -322,6 +340,69 @@ The action writes a JSON file which has the same format as the `outputs.json` us
     path: tower_action_*.json
 ```
 
+## Troubleshooting
+
+### Action fails silently or with unclear errors
+
+Enable debug logging to get detailed information about what's happening:
+
+```yaml
+- uses: seqeralabs/action-tower-launch@v3
+  with:
+    debug: true
+    access_token: ${{ secrets.TOWER_ACCESS_TOKEN }}
+    # ... other inputs
+```
+
+### Common issues and solutions
+
+1. **"HTTP 401: Invalid access token"** - Check that your access token is valid and has the necessary permissions
+2. **"HTTP 403: Insufficient permissions"** - Verify workspace permissions and compute environment access
+3. **"HTTP 404: Not found"** - Check the pipeline URL and workspace ID are correct
+4. **"API connectivity test failed"** - Verify the `api_endpoint` is correct and reachable
+5. **"Missing or null workflowId"** - The API may have returned an error; check the debug logs
+
+### Debug information
+
+The action provides comprehensive debug information when `debug: true` is set:
+
+- **API connectivity tests** - Verifies connection to Seqera Platform
+- **Input validation** - Checks all parameters before sending to API
+- **HTTP request/response details** - Full transparency into API calls
+- **Clear error messages** - Specific guidance for common issues
+
+Example debug output:
+```
+🐛 Debug mode enabled
+Pipeline: https://github.com/nf-core/hello
+API Endpoint: https://api.cloud.seqera.io
+🔗 Testing API connectivity...
+✅ API connectivity confirmed
+🎯 Launching workflow...
+[DEBUG] Launch URL: https://api.cloud.seqera.io/workflow/launch
+[DEBUG] HTTP Status: 200
+✅ Workflow launched successfully!
+```
+
+## Development
+
+### Development Commands
+
+```bash
+# Install dependencies
+npm install
+
+# Run tests
+npm test
+npm run test:coverage
+
+# Lint code
+npm run lint
+
+# Build the action (required before committing)
+npm run build
+```
+
 ## Credits
 
-This GitHub Action was written by Phil Ewels ([@ewels](https://github.com/ewels)), with help from and based on earlier work by Gisela Gabernet ([@ggabernet](https://github.com/ggabernet)).
+This GitHub Action was originally written by Phil Ewels ([@ewels](https://github.com/ewels)), with help from and based on earlier work by Gisela Gabernet ([@ggabernet](https://github.com/ggabernet)). The v3.0 JavaScript rewrite was contributed by Edmund Miller ([@edmundmiller](https://github.com/edmundmiller)).

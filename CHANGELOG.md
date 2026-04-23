@@ -1,5 +1,16 @@
 # seqeralabs/action-tower-launch: Changelog
 
+## [ 3.0.0 ] - 2024-XX-XX
+
+**BREAKING CHANGE: Rewrite to Javascript for native Github Actions integration**
+
+- **Runtime**: Changed from Docker-based to native JavaScript action (`runs: node20`)
+- **Performance**: Significantly faster startup by eliminating container overhead
+- **Error handling**: Improved error messages with specific troubleshooting guidance  
+- **Debug mode**: Enhanced debug logging with `debug: true` input
+- **Wait functionality**: Better workflow status monitoring with configurable timeouts
+- **Compatibility**: All inputs and outputs remain compatible with v2.x
+
 ## [ 2.1.2 ]
 
 - Add testing for all three cloud providers ([#19](https://github.com/seqeralabs/action-tower-launch/pull/19))
