@@ -1,0 +1,100 @@
+name: Test Action
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  # Unit Tests
+  test:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run lint
+        run: npm run lint
+
+      - name: Run tests
+        run: npm run test:ci
+
+      - name: Upload coverage reports
+        uses: codecov/codecov-action@v4
+        if: success()
+        with:
+          file: ./coverage/lcov.info
+          flags: unittests
+          name: codecov-umbrella
+
+  # Build Verification
+  build:
+    name: Build Verification
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build action
+        run: npm run build
+
+      - name: Check dist is up to date
+        run: |
+          if [ -n "$(git diff --name-only dist/)" ]; then
+            echo "dist/ is not up to date. Please run npm run build and commit the changes."
+            git diff --name-only dist/
+            exit 1
+          fi
+
+  # Optional: Real API test (only for maintainers with secrets)
+  api-test:
+    name: API Test (Optional)
+    runs-on: ubuntu-latest
+    needs: [test, build]
+    if: github.event_name != 'pull_request' && github.repository == 'seqeralabs/action-tower-launch'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Test with Real API (if secrets available)
+        if: env.TOWER_ACCESS_TOKEN != null
+        uses: ./
+        with:
+          access_token: ${{ secrets.TOWER_ACCESS_TOKEN }}
+          pipeline: "https://github.com/nf-core/hello"
+          workspace_id: ${{ secrets.TOWER_WORKSPACE_ID }}
+          compute_env: ${{ secrets.TOWER_COMPUTE_ENV }}
+          api_endpoint: ${{ secrets.TOWER_API_ENDPOINT || 'https://api.cloud.seqera.io' }}
+          run_name: "ci-test-${{ github.run_number }}"
+          debug: true
+          wait: false
+        env:
+          TOWER_ACCESS_TOKEN: ${{ secrets.TOWER_ACCESS_TOKEN }}
+
+      - name: Skip API Test
+        if: env.TOWER_ACCESS_TOKEN == null
+        run: |
+          echo "⚠️  Skipping API tests - TOWER_ACCESS_TOKEN not available"
+          echo "This is expected for external contributors and pull requests"

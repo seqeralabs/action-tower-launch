@@ -1,0 +1,150 @@
+2025-08-08T00:57:50.9979288Z Current runner version: '2.327.1'
+2025-08-08T00:57:51.0008575Z ##[group]Runner Image Provisioner
+2025-08-08T00:57:51.0009446Z Hosted Compute Agent
+2025-08-08T00:57:51.0009989Z Version: 20250711.363
+2025-08-08T00:57:51.0010656Z Commit: 6785254374ce925a23743850c1cb91912ce5c14c
+2025-08-08T00:57:51.0011376Z Build Date: 2025-07-11T20:04:25Z
+2025-08-08T00:57:51.0012014Z ##[endgroup]
+2025-08-08T00:57:51.0012616Z ##[group]Operating System
+2025-08-08T00:57:51.0013379Z Ubuntu
+2025-08-08T00:57:51.0014061Z 24.04.2
+2025-08-08T00:57:51.0014724Z LTS
+2025-08-08T00:57:51.0015257Z ##[endgroup]
+2025-08-08T00:57:51.0015734Z ##[group]Runner Image
+2025-08-08T00:57:51.0016390Z Image: ubuntu-24.04
+2025-08-08T00:57:51.0016975Z Version: 20250728.1.0
+2025-08-08T00:57:51.0018079Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20250728.1/images/ubuntu/Ubuntu2404-Readme.md
+2025-08-08T00:57:51.0019787Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20250728.1
+2025-08-08T00:57:51.0020944Z ##[endgroup]
+2025-08-08T00:57:51.0023772Z ##[group]GITHUB_TOKEN Permissions
+2025-08-08T00:57:51.0026348Z Actions: write
+2025-08-08T00:57:51.0026922Z Attestations: write
+2025-08-08T00:57:51.0027469Z Checks: write
+2025-08-08T00:57:51.0028102Z Contents: write
+2025-08-08T00:57:51.0028645Z Deployments: write
+2025-08-08T00:57:51.0029355Z Discussions: write
+2025-08-08T00:57:51.0029927Z Issues: write
+2025-08-08T00:57:51.0030448Z Metadata: read
+2025-08-08T00:57:51.0031078Z Models: read
+2025-08-08T00:57:51.0031608Z Packages: write
+2025-08-08T00:57:51.0032610Z Pages: write
+2025-08-08T00:57:51.0033337Z PullRequests: write
+2025-08-08T00:57:51.0033941Z RepositoryProjects: write
+2025-08-08T00:57:51.0034609Z SecurityEvents: write
+2025-08-08T00:57:51.0035282Z Statuses: write
+2025-08-08T00:57:51.0035836Z ##[endgroup]
+2025-08-08T00:57:51.0038093Z Secret source: Actions
+2025-08-08T00:57:51.0038864Z Prepare workflow directory
+2025-08-08T00:57:51.0377702Z Prepare all required actions
+2025-08-08T00:57:51.0417009Z Getting action download info
+2025-08-08T00:57:51.4144388Z Download action repository 'seqeralabs/action-tower-launch@v2' (SHA:51565b514bff1827cf34620de25d0055759f1fc9)
+2025-08-08T00:57:51.8947379Z Download action repository 'actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+2025-08-08T00:57:52.0997740Z Complete job name: Run AWS full tests (star_rsem)
+2025-08-08T00:57:52.1469665Z ##[group]Build container for action use: '/home/runner/work/_actions/seqeralabs/action-tower-launch/v2/Dockerfile'.
+2025-08-08T00:57:52.1543614Z ##[command]/usr/bin/docker build -t 379d62:8c8ce7071cb94ed4b329613f6ef9afc5 -f "/home/runner/work/_actions/seqeralabs/action-tower-launch/v2/Dockerfile" "/home/runner/work/_actions/seqeralabs/action-tower-launch/v2"
+2025-08-08T00:57:52.7614483Z #0 building with "default" instance using docker driver
+2025-08-08T00:57:52.7615326Z 
+2025-08-08T00:57:52.7615675Z #1 [internal] load build definition from Dockerfile
+2025-08-08T00:57:52.7616463Z #1 transferring dockerfile: 455B done
+2025-08-08T00:57:52.7617183Z #1 DONE 0.0s
+2025-08-08T00:57:52.7617457Z 
+2025-08-08T00:57:52.7617842Z #2 [auth] library/alpine:pull token for registry-1.docker.io
+2025-08-08T00:57:52.7618637Z #2 DONE 0.0s
+2025-08-08T00:57:52.7618904Z 
+2025-08-08T00:57:52.7619292Z #3 [internal] load metadata for docker.io/library/alpine:latest
+2025-08-08T00:57:53.0355834Z #3 DONE 0.5s
+2025-08-08T00:57:53.1509215Z 
+2025-08-08T00:57:53.1509874Z #4 [internal] load .dockerignore
+2025-08-08T00:57:53.1510896Z #4 transferring context: 2B done
+2025-08-08T00:57:53.1511693Z #4 DONE 0.0s
+2025-08-08T00:57:53.1512060Z 
+2025-08-08T00:57:53.1512359Z #5 [internal] load build context
+2025-08-08T00:57:53.1513380Z #5 transferring context: 2.58kB done
+2025-08-08T00:57:53.1514359Z #5 DONE 0.0s
+2025-08-08T00:57:53.1514706Z 
+2025-08-08T00:57:53.1515819Z #6 [1/4] FROM docker.io/library/alpine:latest@sha256:4bcff63911fcb4448bd4fdacec207030997caf25e9bea4045fa6c8c44de311d1
+2025-08-08T00:57:53.1518086Z #6 resolve docker.io/library/alpine:latest@sha256:4bcff63911fcb4448bd4fdacec207030997caf25e9bea4045fa6c8c44de311d1 done
+2025-08-08T00:57:53.1520539Z #6 sha256:4bcff63911fcb4448bd4fdacec207030997caf25e9bea4045fa6c8c44de311d1 9.22kB / 9.22kB done
+2025-08-08T00:57:53.1522234Z #6 sha256:eafc1edb577d2e9b458664a15f23ea1c370214193226069eb22921169fc7e43f 1.02kB / 1.02kB done
+2025-08-08T00:57:53.1524050Z #6 sha256:9234e8fb04c47cfe0f49931e4ac7eb76fa904e33b7f8576aec0501c085f02516 581B / 581B done
+2025-08-08T00:57:53.1525701Z #6 sha256:9824c27679d3b27c5e1cb00a73adb6f4f8d556994111c12db3c5d61a0c843df8 1.05MB / 3.80MB 0.1s
+2025-08-08T00:57:53.2574627Z #6 sha256:9824c27679d3b27c5e1cb00a73adb6f4f8d556994111c12db3c5d61a0c843df8 3.15MB / 3.80MB 0.2s
+2025-08-08T00:57:53.3722055Z #6 extracting sha256:9824c27679d3b27c5e1cb00a73adb6f4f8d556994111c12db3c5d61a0c843df8
+2025-08-08T00:57:53.3725684Z #6 sha256:9824c27679d3b27c5e1cb00a73adb6f4f8d556994111c12db3c5d61a0c843df8 3.80MB / 3.80MB 0.2s done
+2025-08-08T00:57:53.3728692Z #6 extracting sha256:9824c27679d3b27c5e1cb00a73adb6f4f8d556994111c12db3c5d61a0c843df8 0.1s done
+2025-08-08T00:57:53.5211383Z #6 DONE 0.3s
+2025-08-08T00:57:53.5212129Z 
+2025-08-08T00:57:53.5215147Z #7 [2/4] RUN apk add --no-cache curl ca-certificates jq uuidgen     && curl -L https://github.com/seqeralabs/tower-cli/releases/download/v0.12.0/tw-linux-x86_64 > tw     && chmod +x ./tw     && mv tw /usr/local/bin/     && tw --version
+2025-08-08T00:57:53.5218688Z #7 0.148 fetch https://dl-cdn.alpinelinux.org/alpine/v3.22/main/x86_64/APKINDEX.tar.gz
+2025-08-08T00:57:53.7506893Z #7 0.227 fetch https://dl-cdn.alpinelinux.org/alpine/v3.22/community/x86_64/APKINDEX.tar.gz
+2025-08-08T00:57:53.9562780Z #7 0.583 (1/14) Installing ca-certificates (20250619-r0)
+2025-08-08T00:57:54.0648781Z #7 0.618 (2/14) Installing brotli-libs (1.1.0-r2)
+2025-08-08T00:57:54.0649372Z #7 0.632 (3/14) Installing c-ares (1.34.5-r0)
+2025-08-08T00:57:54.0649734Z #7 0.641 (4/14) Installing libunistring (1.3-r0)
+2025-08-08T00:57:54.0650074Z #7 0.659 (5/14) Installing libidn2 (2.3.7-r0)
+2025-08-08T00:57:54.0650504Z #7 0.664 (6/14) Installing nghttp2-libs (1.65.0-r0)
+2025-08-08T00:57:54.0650856Z #7 0.668 (7/14) Installing libpsl (0.21.5-r3)
+2025-08-08T00:57:54.0651202Z #7 0.672 (8/14) Installing zstd-libs (1.5.7-r0)
+2025-08-08T00:57:54.0651543Z #7 0.682 (9/14) Installing libcurl (8.14.1-r1)
+2025-08-08T00:57:54.0651871Z #7 0.692 (10/14) Installing curl (8.14.1-r1)
+2025-08-08T00:57:54.2298048Z #7 0.698 (11/14) Installing oniguruma (6.9.10-r0)
+2025-08-08T00:57:54.2298836Z #7 0.705 (12/14) Installing jq (1.8.0-r0)
+2025-08-08T00:57:54.2300270Z #7 0.714 (13/14) Installing libuuid (2.41-r9)
+2025-08-08T00:57:54.2300844Z #7 0.718 (14/14) Installing uuidgen (2.41-r9)
+2025-08-08T00:57:54.2301278Z #7 0.726 Executing busybox-1.37.0-r18.trigger
+2025-08-08T00:57:54.2301692Z #7 0.731 Executing ca-certificates-20250619-r0.trigger
+2025-08-08T00:57:54.2302055Z #7 0.771 OK: 13 MiB in 30 packages
+2025-08-08T00:57:54.2302454Z #7 0.856   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+2025-08-08T00:57:54.3522975Z #7 0.856                                  Dload  Upload   Total   Spent    Left  Speed
+2025-08-08T00:57:54.3523955Z #7 0.856 
+2025-08-08T00:57:54.3524621Z   0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+2025-08-08T00:57:54.3526913Z   0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+2025-08-08T00:57:54.7687280Z #7 1.395 
+2025-08-08T00:57:55.1922701Z  54 87.8M   54 48.2M    0     0  89.3M      0 --:--:-- --:--:-- --:--:-- 89.3M
+2025-08-08T00:57:55.1923668Z 100 87.8M  100 87.8M    0     0  91.1M      0 --:--:-- --:--:-- --:--:-- 93.6M
+2025-08-08T00:57:55.4008292Z #7 1.877 Tower CLI version 0.12.0 (build ff9446a)
+2025-08-08T00:57:56.1228078Z #7 DONE 2.7s
+2025-08-08T00:57:56.2609499Z 
+2025-08-08T00:57:56.2610971Z #8 [3/4] ADD *.sh /
+2025-08-08T00:57:56.2611534Z #8 DONE 0.0s
+2025-08-08T00:57:56.2611837Z 
+2025-08-08T00:57:56.2611996Z #9 [4/4] RUN chmod +x /entrypoint.sh
+2025-08-08T00:57:56.2612374Z #9 DONE 0.1s
+2025-08-08T00:57:56.4125608Z 
+2025-08-08T00:57:56.4126018Z #10 exporting to image
+2025-08-08T00:57:56.4126344Z #10 exporting layers
+2025-08-08T00:57:57.0111301Z #10 exporting layers 0.7s done
+2025-08-08T00:57:57.0313992Z #10 writing image sha256:033490d3d369952478497b9401991fbd3b08ece901dab445335952fe1616d08a done
+2025-08-08T00:57:57.0315089Z #10 naming to docker.io/library/379d62:8c8ce7071cb94ed4b329613f6ef9afc5 done
+2025-08-08T00:57:57.0315734Z #10 DONE 0.8s
+2025-08-08T00:57:57.0375452Z ##[endgroup]
+2025-08-08T00:57:57.0629043Z ##[group]Run echo "revision=93452bcf677c7b933f1d21f1bb4b1688787a905f" >> "$GITHUB_OUTPUT"
+2025-08-08T00:57:57.0629727Z [36;1mecho "revision=93452bcf677c7b933f1d21f1bb4b1688787a905f" >> "$GITHUB_OUTPUT"[0m
+2025-08-08T00:57:57.0662466Z shell: /usr/bin/bash -e {0}
+2025-08-08T00:57:57.0663003Z ##[endgroup]
+2025-08-08T00:57:57.0925090Z ##[group]Run seqeralabs/action-tower-launch@v2
+2025-08-08T00:57:57.0925421Z with:
+2025-08-08T00:57:57.0925890Z   workspace_id: ***
+2025-08-08T00:57:57.0926380Z   access_token: ***
+2025-08-08T00:57:57.0926625Z   compute_env: ***
+2025-08-08T00:57:57.0926873Z   revision: 93452bcf677c7b933f1d21f1bb4b1688787a905f
+2025-08-08T00:57:57.0927384Z   workdir: s3://***/work/rnaseq/work-93452bcf677c7b933f1d21f1bb4b1688787a905f
+2025-08-08T00:57:57.0928486Z   parameters: {
+  "hook_url": "***",
+  "aligner": "star_rsem",
+  "outdir": "s3://***/rnaseq/results-93452bcf677c7b933f1d21f1bb4b1688787a905f/aligner_star_rsem/"
+}
+
+2025-08-08T00:57:57.0929043Z   profiles: test_full
+2025-08-08T00:57:57.0929287Z   api_endpoint: https://api.cloud.seqera.io
+2025-08-08T00:57:57.0929595Z   pipeline: https://github.com/nf-core/rnaseq
+2025-08-08T00:57:57.0929858Z   wait: false
+2025-08-08T00:57:57.0930041Z ##[endgroup]
+2025-08-08T00:57:57.1087090Z ##[command]/usr/bin/docker run --name d628c8ce7071cb94ed4b329613f6ef9afc5_0aeebe --label 379d62 --workdir /github/workspace --rm -e "INPUT_WORKSPACE_ID" -e "INPUT_ACCESS_TOKEN" -e "INPUT_COMPUTE_ENV" -e "INPUT_REVISION" -e "INPUT_WORKDIR" -e "INPUT_PARAMETERS" -e "INPUT_PROFILES" -e "INPUT_API_ENDPOINT" -e "INPUT_PIPELINE" -e "INPUT_RUN_NAME" -e "INPUT_NEXTFLOW_CONFIG" -e "INPUT_PRE_RUN_SCRIPT" -e "INPUT_WAIT" -e "TOWER_WORKSPACE_ID" -e "TOWER_API_ENDPOINT" -e "TOWER_ACCESS_TOKEN" -e "TOWER_COMPUTE_ENV" -e "PIPELINE" -e "REVISION" -e "WORKDIR" -e "PARAMETERS" -e "CONFIG_PROFILES" -e "RUN_NAME" -e "NEXTFLOW_CONFIG" -e "PRE_RUN_SCRIPT" -e "WAIT" -e "HOME" -e "GITHUB_JOB" -e "GITHUB_REF" -e "GITHUB_SHA" -e "GITHUB_REPOSITORY" -e "GITHUB_REPOSITORY_OWNER" -e "GITHUB_REPOSITORY_OWNER_ID" -e "GITHUB_RUN_ID" -e "GITHUB_RUN_NUMBER" -e "GITHUB_RETENTION_DAYS" -e "GITHUB_RUN_ATTEMPT" -e "GITHUB_ACTOR_ID" -e "GITHUB_ACTOR" -e "GITHUB_WORKFLOW" -e "GITHUB_HEAD_REF" -e "GITHUB_BASE_REF" -e "GITHUB_EVENT_NAME" -e "GITHUB_SERVER_URL" -e "GITHUB_API_URL" -e "GITHUB_GRAPHQL_URL" -e "GITHUB_REF_NAME" -e "GITHUB_REF_PROTECTED" -e "GITHUB_REF_TYPE" -e "GITHUB_WORKFLOW_REF" -e "GITHUB_WORKFLOW_SHA" -e "GITHUB_REPOSITORY_ID" -e "GITHUB_TRIGGERING_ACTOR" -e "GITHUB_WORKSPACE" -e "GITHUB_ACTION" -e "GITHUB_EVENT_PATH" -e "GITHUB_ACTION_REPOSITORY" -e "GITHUB_ACTION_REF" -e "GITHUB_PATH" -e "GITHUB_ENV" -e "GITHUB_STEP_SUMMARY" -e "GITHUB_STATE" -e "GITHUB_OUTPUT" -e "RUNNER_OS" -e "RUNNER_ARCH" -e "RUNNER_NAME" -e "RUNNER_ENVIRONMENT" -e "RUNNER_TOOL_CACHE" -e "RUNNER_TEMP" -e "RUNNER_WORKSPACE" -e "ACTIONS_RUNTIME_URL" -e "ACTIONS_RUNTIME_TOKEN" -e "ACTIONS_CACHE_URL" -e "ACTIONS_RESULTS_URL" -e GITHUB_ACTIONS=true -e CI=true -v "/var/run/docker.sock":"/var/run/docker.sock" -v "/home/runner/work/_temp/_github_home":"/github/home" -v "/home/runner/work/_temp/_github_workflow":"/github/workflow" -v "/home/runner/work/_temp/_runner_file_commands":"/github/file_commands" -v "/home/runner/work/rnaseq/rnaseq":"/github/workspace" 379d62:8c8ce7071cb94ed4b329613f6ef9afc5
+2025-08-08T00:57:57.2895102Z   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+2025-08-08T00:57:57.2895794Z                                  Dload  Upload   Total   Spent    Left  Speed
+2025-08-08T00:57:57.2896463Z 
+2025-08-08T00:57:57.8093538Z   0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+2025-08-08T00:57:57.8111458Z   0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+2025-08-08T00:57:57.8112456Z 100  1172  100  1172    0     0   2243      0 --:--:-- --:--:-- --:--:--  2240
+2025-08-08T00:57:58.5000489Z Cleaning up orphan processes
