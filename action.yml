@@ -1,7 +1,7 @@
 name: action-tower-launch
 author: Phil Ewels
 
-description: Launch a workflow using Nextflow Tower (https://cloud.seqera.io/)
+description: Launch a workflow using Seqera Platform (https://cloud.seqera.io/)
 
 branding:
   icon: "play"
@@ -9,16 +9,16 @@ branding:
 
 inputs:
   access_token:
-    description: Nextflow Tower access token
+    description: Seqera Platform access token
     required: true
   compute_env:
-    description: Nextflow Tower compute env
+    description: Seqera Platform compute env
     required: false
   workspace_id:
-    description: Nextflow Tower workspace ID
+    description: Seqera Platform workspace ID
     required: false
   api_endpoint:
-    description: Tower API URL
+    description: Seqera Platform API URL
     required: false
     default: https://api.cloud.seqera.io
   pipeline:
@@ -39,7 +39,7 @@ inputs:
     description: Nextflow config profiles
     required: false
   run_name:
-    description: Nextflow Tower Run Name
+    description: Seqera Platform Run Name
     required: false
   nextflow_config:
     description: Nextflow config options
@@ -56,22 +56,22 @@ outputs:
   json:
     description: JSON from tw launch with workflowID, workflowUrl, workspaceId, workspaceRef
   workflowId:
-    description: Unique ID of the pipeline run in Nextflow Tower.
+    description: Unique ID of the pipeline run in Seqera Platform.
   workflowUrl:
-    description: URL to pipeline run in Nextflow Tower.
+    description: URL to pipeline run in Seqera Platform.
   workspaceId:
-    description: Unique ID of workspace in Nextflow Tower in which the pipeline is running.
+    description: Unique ID of workspace in Seqera Platform in which the pipeline is running.
   workspaceRef:
-    description: Human readable format of workspace in Nextflow tower in format '[ organisation / workspace ]'.
+    description: Human readable format of workspace in Seqera Platform in format '[ organisation / workspace ]'.
 
 runs:
   using: "docker"
   image: Dockerfile
   env:
-    TOWER_WORKSPACE_ID: ${{ inputs.workspace_id }}
-    TOWER_API_ENDPOINT: ${{ inputs.api_endpoint }}
-    TOWER_ACCESS_TOKEN: ${{ inputs.access_token }}
-    TOWER_COMPUTE_ENV: ${{ inputs.compute_env }}
+    SEQERA_WORKSPACE_ID: ${{ inputs.workspace_id }}
+    SEQERA_API_ENDPOINT: ${{ inputs.api_endpoint }}
+    SEQERA_ACCESS_TOKEN: ${{ inputs.access_token }}
+    SEQERA_COMPUTE_ENV: ${{ inputs.compute_env }}
     PIPELINE: ${{ inputs.pipeline }}
     REVISION: ${{ inputs.revision }}
     WORKDIR: ${{ inputs.workdir }}

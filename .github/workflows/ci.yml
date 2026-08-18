@@ -12,7 +12,7 @@ on:
 
 jobs:
   run-tower:
-    name: Launch on Nextflow Tower
+    name: Launch on Seqera Platform
     # Don't try to run on forked repos
     if: github.repository == 'seqeralabs/action-tower-launch'
     runs-on: ubuntu-latest

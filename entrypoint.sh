@@ -2,10 +2,10 @@
 set -euo pipefail
 
 # Mask certain variables from Github logs
-echo "::add-mask::$TOWER_WORKSPACE_ID"
-echo "::add-mask::$TOWER_API_ENDPOINT"
-echo "::add-mask::$TOWER_ACCESS_TOKEN"
-echo "::add-mask::$TOWER_COMPUTE_ENV"
+echo "::add-mask::$SEQERA_WORKSPACE_ID"
+echo "::add-mask::$SEQERA_API_ENDPOINT"
+echo "::add-mask::$SEQERA_ACCESS_TOKEN"
+echo "::add-mask::$SEQERA_COMPUTE_ENV"
 
 LOG_FN=tower_action_$(date +'%Y_%m_%d-%H_%M').log
 LOG_JSON="tower_action_"$(uuidgen)".json"
@@ -33,7 +33,7 @@ OUT=$(tw -o json -v \
     $PIPELINE \
     ${PARAMETERS:+"--params-file=params.json"} \
     ${WORKDIR:+"--work-dir=$WORKDIR"} \
-    ${TOWER_COMPUTE_ENV:+"--compute-env=$TOWER_COMPUTE_ENV"} \
+    ${SEQERA_COMPUTE_ENV:+"--compute-env=$SEQERA_COMPUTE_ENV"} \
     ${REVISION:+"--revision=$REVISION"} \
     ${CONFIG_PROFILES:+"--profile=$CONFIG_PROFILES"} \
     ${RUN_NAME:+"--name=${RUN_NAME/:/_}"} \
@@ -63,7 +63,7 @@ echo "workspaceRef=$workspaceRef" >> $GITHUB_OUTPUT
 echo "json='$(echo $OUT | base64 -d | jq -rc)'"  >> $GITHUB_OUTPUT
 
 # Strip secrets from the log file
-sed -i "s/$TOWER_ACCESS_TOKEN/xxxxxx/" $LOG_FN
+sed -i "s/$SEQERA_ACCESS_TOKEN/xxxxxx/" $LOG_FN
 
 # Create output json file
 echo $OUT | base64 -d > $LOG_JSON
