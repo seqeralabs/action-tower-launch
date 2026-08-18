@@ -86,6 +86,9 @@ Please note that a number of these inputs are sensitive and should be kept secur
 
 Note that if you are using secrets, these will be screened in the GitHub Actions log and appear as `***`.
 
+> [!WARNING]
+> Secret masking only covers the live GitHub Actions log view. It does not extend to the `tower_action_*.log`/`.json` files this action writes. If you interpolate a secret into `nextflow_config`, `parameters` or `pre_run_script` and enable the `verbose` action input, it will appear in plain text in the log. Prefer resolving such secrets via [Seqera Platform pipeline secrets](https://docs.seqera.io/nextflow/secrets) (`secrets.MY_SECRET` in Nextflow config) instead of GitHub Actions secrets wherever possible, since Platform secrets are never sent through this action or its logs at all.
+
 ### `access_token`
 
 **[Required]** Seqera Platform personal access token.
@@ -216,6 +219,25 @@ jobs:
       - uses: nf-core/tower-action@v2
         with:
           wait: false
+          # Truncated..
+```
+
+### `verbose`
+
+**[Optional]** Enable verbose logging in the Tower CLI, for debugging launch failures.
+
+Default: `false`.
+
+> [!WARNING]
+> Verbose mode makes the CLI log full HTTP request/response bodies to `tower_action_*.log`, including the literal contents of `nextflow_config`, `parameters` and `pre_run_script`. GitHub's secret masking does not cover this file.
+
+```yaml
+jobs:
+  run-tower:
+    steps:
+      - uses: seqeralabs/action-tower-launch@v2
+        with:
+          verbose: true
           # Truncated..
 ```
 

@@ -51,6 +51,13 @@ inputs:
     description: Set GitHub action to wait for pipeline completion
     default: false
     required: false
+  verbose:
+    description: >-
+      Enable verbose logging in the Tower CLI for debugging. WARNING: this makes
+      the CLI log full HTTP request/response bodies to tower_action_*.log.
+      GitHub's secret masking does not apply to that file.
+    default: false
+    required: false
 
 outputs:
   json:
@@ -81,3 +88,4 @@ runs:
     NEXTFLOW_CONFIG: ${{ inputs.nextflow_config }}
     PRE_RUN_SCRIPT: ${{ inputs.pre_run_script }}
     WAIT: ${{ inputs.wait }}
+    VERBOSE: ${{ inputs.verbose }}

@@ -10,14 +10,26 @@ on:
     types: [published]
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
 jobs:
   run-tower:
     name: Launch on Seqera Platform
     # Don't try to run on forked repos
     if: github.repository == 'seqeralabs/action-tower-launch'
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write # to comment on the PR with the run results
     steps:
-      - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - uses: ./
         id: aws_run
@@ -57,7 +69,7 @@ jobs:
 
       - name: Comment PR
         if: github.event_name == 'pull_request'
-        uses: thollander/actions-comment-pull-request@fabd468d3a1a0b97feee5f6b9e499eab0dd903f6 # v2
+        uses: thollander/actions-comment-pull-request@24bffb9b452ba05a4f3f77933840a6a841d1b32b # v3.0.1
         with:
           message: |
             ### 🚀 Pipelines launched
@@ -76,17 +88,17 @@ jobs:
             | 🏠 GCP Workspace | `${{ steps.gcp_run.outputs.workspaceRef }}` |
             | 🗂️ GCP Workspace ID | `${{ steps.gcp_run.outputs.workspaceId }}` |
             | 😎 GCP Workflow URL | ${{ steps.gcp_run.outputs.workflowUrl }} |
-          comment_tag: towerrun
+          comment-tag: towerrun
 
       - name: Comment PR
-        uses: thollander/actions-comment-pull-request@fabd468d3a1a0b97feee5f6b9e499eab0dd903f6 # v2
+        uses: thollander/actions-comment-pull-request@24bffb9b452ba05a4f3f77933840a6a841d1b32b # v3.0.1
         if: failure() && github.event_name == 'pull_request'
         with:
           message: |
             ### :x: Pipeline launch failed
 
             The pipeline launch failed. Check the logs uploaded as an artifact for more information.
-          comment_tag: towerrun
+          comment-tag: towerrun
 
       - uses: ./
         id: runfails
@@ -101,17 +113,19 @@ jobs:
 
       - name: Check Failure
         if: steps.runfails.outcome == 'success'
+        env:
+          RUNFAILS_OUTCOME: ${{ steps.runfails.outcome }}
         run: |
-          echo "Failed to catch invalid pipeline submission: ${{ steps.runfails.outcome }}"
+          echo "Failed to catch invalid pipeline submission: $RUNFAILS_OUTCOME"
           exit 1
 
-      - uses: actions/upload-artifact@de65e23aa2b7e23d713bb51fbfcb6d502f8667d8
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: success()
         with:
           name: ${{ github.job }}_run_json
           path: tower_action_*.json
 
-      - uses: actions/upload-artifact@de65e23aa2b7e23d713bb51fbfcb6d502f8667d8
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: success() || failure()
         with:
           name: Tower debug log file
