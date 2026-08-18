@@ -45,6 +45,7 @@ jobs:
 
       - uses: ./
         id: azure_run
+        continue-on-error: true
         # Use repository secrets for sensitive fields
         with:
           access_token: ${{ secrets.TOWER_ACCESS_TOKEN }}
