@@ -26,9 +26,12 @@ echo -e "$NEXTFLOW_CONFIG" > nextflow.config
 # If wait is set to false then unset wait to disable waiting
 if [ "$WAIT" = false ]; then unset WAIT; fi
 
+# Verbose mode is opt-in: it makes the CLI log full request/response bodies
+if [ "$VERBOSE" = false ]; then unset VERBOSE; fi
+
 # Launch the pipeline
 # We use capture the JSON as variable $OUT. We encode it as base64 to get around Github secrets filters but we still mask it anyway to make sure the details don't leak.
-OUT=$(tw -o json -v \
+OUT=$(tw -o json ${VERBOSE:+"-v"} \
     launch \
     $PIPELINE \
     ${PARAMETERS:+"--params-file=params.json"} \

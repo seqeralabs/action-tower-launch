@@ -5,9 +5,18 @@ on:
     tags:
       - "v*"
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
 jobs:
   update-major-ver:
     name: Update major version tag
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # to push the updated major-version tag
     steps:
-      - uses: nowactions/update-majorver@v1
+      - uses: nowactions/update-majorver@f2014bbbba95b635e990ce512c5653bd0f4753fb # v1

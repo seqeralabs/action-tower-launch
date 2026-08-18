@@ -1,16 +1,19 @@
 # seqeralabs/action-tower-launch
 
-**A GitHub Action to launch a workflow using [Nextflow Tower](https://tower.nf) - <https://tower.nf>.**
+**A GitHub Action to launch a workflow using [Seqera Platform](https://cloud.seqera.io) - <https://cloud.seqera.io>.**
 
-This action uses the [Nextflow Tower CLI](https://github.com/seqeralabs/tower-cli/).
+This action uses the [Tower CLI](https://github.com/seqeralabs/tower-cli/).
 
 Contributed with ❤️ from the [@nf-core](https://github.com/nf-core/) community.
+
+> [!NOTE]
+> Yes we know, _Nextflow Tower_ was renamed to _Seqera Platform_ a while back, but renaming the GitHub Action would mean breaking everyone's workflows.
 
 ## Example usage
 
 ### Minimal example
 
-This runs the current GitHub repository pipeline on [Nextflow Tower](https://tower.nf) at the current commit hash when pushed to the `dev` branch. The workflow runs on the user's personal workspace.
+This runs the current GitHub repository pipeline on [Seqera Platform](https://cloud.seqera.io) at the current commit hash when pushed to the `dev` branch. The workflow runs on the user's personal workspace.
 
 ```yaml
 on:
@@ -31,12 +34,12 @@ jobs:
 
 This example never runs automatically, but creates a button under the GitHub repository _Actions_ tab that can be used to manually trigger the workflow.
 
-It runs on a specified installation of Tower, with a specific organisation workspace. It also calls an external pipeline to be run at a pinned version tag.
+It runs on a specified installation of Seqera Platform, with a specific organisation workspace. It also calls an external pipeline to be run at a pinned version tag.
 
 The `--outdir` parameter is used to save results to a separate directory in the AWS bucket and the pipeline uses two config profiles.
 
 ```yaml
-name: Launch on Tower
+name: Launch on Seqera Platform
 
 # Manually trigger the action with a button in GitHub
 # Alternatively, trigger on release / push etc.
@@ -45,7 +48,7 @@ on:
 
 jobs:
   run-tower:
-    name: Launch on Nextflow Tower
+    name: Launch on Seqera Platform
     # Don't try to run on forked repos
     if: github.repository == 'YOUR_USERNAME/REPO'
     runs-on: ubuntu-latest
@@ -83,13 +86,16 @@ Please note that a number of these inputs are sensitive and should be kept secur
 
 Note that if you are using secrets, these will be screened in the GitHub Actions log and appear as `***`.
 
+> [!WARNING]
+> Secret masking only covers the live GitHub Actions log view. It does not extend to the `tower_action_*.log`/`.json` files this action writes. If you interpolate a secret into `nextflow_config`, `parameters` or `pre_run_script` and enable the `verbose` action input, it will appear in plain text in the log. Prefer resolving such secrets via [Seqera Platform pipeline secrets](https://docs.seqera.io/nextflow/secrets) (`secrets.MY_SECRET` in Nextflow config) instead of GitHub Actions secrets wherever possible, since Platform secrets are never sent through this action or its logs at all.
+
 ### `access_token`
 
-**[Required]** Nextflow Tower personal access token.
+**[Required]** Seqera Platform personal access token.
 
-Visit <https://tower.nf/tokens> to generate a new access token.
+Visit <https://cloud.seqera.io/tokens> to generate a new access token.
 
-See the [Nextflow Tower documentation for more details](https://help.tower.nf/getting-started/usage/#via-nextflow-run-command):
+See the [Seqera Platform documentation for more details](https://docs.seqera.io/platform-cloud):
 
 ![workspace ID](img/usage_create_token.png)
 ![workspace ID](img/usage_name_token.png)
@@ -97,9 +103,9 @@ See the [Nextflow Tower documentation for more details](https://help.tower.nf/ge
 
 ### `workspace_id`
 
-**[Optional]** Nextflow Tower workspace ID.
+**[Optional]** Seqera Platform workspace ID.
 
-Nextflow Tower organisations can have multiple _Workspaces_. Use this field to choose a specific workspace.
+Seqera Platform organisations can have multiple _Workspaces_. Use this field to choose a specific workspace.
 
 Default: Your personal user's workspace.
 
@@ -111,13 +117,13 @@ Default: Your primary workspace.
 
 ### `compute_env`
 
-**[Optional]** Nextflow Tower compute environment name _(not ID)_.
+**[Optional]** Seqera Platform compute environment name _(not ID)_.
 
 Default: Your primary compute environment.
 
 ### `api_endpoint`
 
-**[Optional]** Nextflow Tower API URL endpoint.
+**[Optional]** Seqera Platform API URL endpoint.
 
 Default: `api.cloud.seqera.io`
 
@@ -126,7 +132,7 @@ Default: `api.cloud.seqera.io`
 **[Optional]** Workspace pipeline name or full pipeline URL.
 
 For example, `https://github.com/nf-core/sarek`.
-Can also be the name of a preconfigured pipeline in Nextflow Tower.
+Can also be the name of a preconfigured pipeline in Seqera Platform.
 
 Default: The current GitHub repository (`https://github.com/${{github.repository}}`).
 
@@ -136,13 +142,13 @@ Default: The current GitHub repository (`https://github.com/${{github.repository
 
 A pipeline release tag, branch or commit hash.
 
-Default: The revision specified in Tower or the default branch of the repo.
+Default: The revision specified in Seqera Platform or the default branch of the repo.
 
 ### `workdir`
 
 **[Optional]** Nextflow work directory.
 
-The location that temporary working files should be stored. Must be accessible in the Nextflow Tower compute environment used.
+The location that temporary working files should be stored. Must be accessible in the Seqera Platform compute environment used.
 
 ### `parameters`
 
@@ -162,9 +168,9 @@ Pipeline config profiles to use. Should be comma separated without spaces.
 
 ### `run_name`
 
-**[Optional]** Nextflow Tower run name
+**[Optional]** Seqera Platform run name
 
-Provide a name for the run in Nextflow Tower.
+Provide a name for the run in Seqera Platform.
 
 ### `nextflow_config`
 
@@ -188,7 +194,7 @@ jobs:
 
 **[Optional]** Pre-run script before launch.
 
-Pre-run script executed before pipeline launch. This would be particularly useful if you wanted to use a different version of Nextflow than the default available in Tower. You can set this in the pipeline Github Actions:
+Pre-run script executed before pipeline launch. This would be particularly useful if you wanted to use a different version of Nextflow than the default available in Seqera Platform. You can set this in the pipeline Github Actions:
 
 ```yaml
 jobs:
@@ -216,16 +222,35 @@ jobs:
           # Truncated..
 ```
 
+### `verbose`
+
+**[Optional]** Enable verbose logging in the Tower CLI, for debugging launch failures.
+
+Default: `false`.
+
+> [!WARNING]
+> Verbose mode makes the CLI log full HTTP request/response bodies to `tower_action_*.log`, including the literal contents of `nextflow_config`, `parameters` and `pre_run_script`. GitHub's secret masking does not cover this file.
+
+```yaml
+jobs:
+  run-tower:
+    steps:
+      - uses: seqeralabs/action-tower-launch@v2
+        with:
+          verbose: true
+          # Truncated..
+```
+
 ## Outputs
 
 ### Output variables
 
-The action creates the output variable `json` which is a JSON string of metadata created by the Tower API. It looks like this and can be parsed using the built in `fromJSON()` method.
+The action creates the output variable `json` which is a JSON string of metadata created by the Seqera Platform API. It looks like this and can be parsed using the built in `fromJSON()` method.
 
 ```
 {
   "workflowId" : "7f061c344df044",
-  "workflowUrl" : "https://tower.nf/orgs/myorg/workspaces/myworkspace/watch/7f061c344df044",
+  "workflowUrl" : "https://cloud.seqera.io/orgs/myorg/workspaces/myworkspace/watch/7f061c344df044",
   "workspaceId" : 123456789,
   "workspaceRef" : "[myorg / myworkspace]"
 }
@@ -309,7 +334,7 @@ The output log file is saved as `tower_action_$(timestamp).log` and can be captu
 ```yaml
 - uses: actions/upload-artifact@v4
   with:
-    name: Tower debug log file
+    name: Seqera Platform debug log file
     path: tower_action_*.log
 ```
 
@@ -318,7 +343,7 @@ The action writes a JSON file which has the same format as the `outputs.json` us
 ```yaml
 - uses: actions/upload-artifact@v4
   with:
-    name: Tower output JSON file
+    name: Seqera Platform output JSON file
     path: tower_action_*.json
 ```
 

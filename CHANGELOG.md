@@ -1,5 +1,9 @@
 # seqeralabs/action-tower-launch: Changelog
 
+## [ 2.1.3 ]
+
+- Security fix: `tw launch` is no longer run with `-v` by default. Verbose mode logged full HTTP request/response bodies into `tower_action_*.log`. Verbose logging is now opt-in via the new `verbose` input.
+
 ## [ 2.1.2 ]
 
 - Add testing for all three cloud providers ([#19](https://github.com/seqeralabs/action-tower-launch/pull/19))
