@@ -10,6 +10,16 @@ echo "::add-mask::$TOWER_COMPUTE_ENV"
 LOG_FN=tower_action_$(date +'%Y_%m_%d-%H_%M').log
 LOG_JSON="tower_action_"$(uuidgen)".json"
 
+# EXIT trap so the scrub also runs when `tw launch` fails and `set -e` aborts.
+scrub_secrets() {
+    [ -n "${TOWER_ACCESS_TOKEN:-}" ] || return 0
+    for f in "$LOG_FN" "$LOG_JSON"; do
+        [ -f "$f" ] || continue
+        sed -i "s|$TOWER_ACCESS_TOKEN|xxxxxx|g" "$f" || true
+    done
+}
+trap scrub_secrets EXIT
+
 # Manual curl of service-info
 curl https://api.cloud.seqera.io/service-info >> $LOG_FN
 echo -e "\n\n------\n\n" >> $LOG_FN
@@ -65,10 +75,9 @@ echo "workspaceId=$workspaceId" >> $GITHUB_OUTPUT
 echo "workspaceRef=$workspaceRef" >> $GITHUB_OUTPUT
 echo "json='$(echo $OUT | base64 -d | jq -rc)'"  >> $GITHUB_OUTPUT
 
-# Strip secrets from the log file
-sed -i "s/$TOWER_ACCESS_TOKEN/xxxxxx/" $LOG_FN
-
 # Create output json file
 echo $OUT | base64 -d > $LOG_JSON
+
+scrub_secrets  # the trap fires after the cat below, so scrub here too
 
 cat $LOG_FN
