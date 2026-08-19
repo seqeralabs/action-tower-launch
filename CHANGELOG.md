@@ -1,5 +1,9 @@
 # seqeralabs/action-tower-launch: Changelog
 
+## [ Unreleased ]
+
+- Security fix: always strip `TOWER_ACCESS_TOKEN` from `tower_action_*.log`/`.json`. Scrubbing now runs from an `EXIT` trap, so it also happens when `tw launch` fails and the script aborts early
+
 ## [ 2.3.1 ]
 
 - Stop tolerating Azure failures on CI ([#45](https://github.com/seqeralabs/action-tower-launch/pull/45))
