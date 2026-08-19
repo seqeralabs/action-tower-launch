@@ -1,5 +1,9 @@
 # seqeralabs/action-tower-launch: Changelog
 
+## [ 2.3.1 ]
+
+- Stop tolerating Azure failures on CI ([#45](https://github.com/seqeralabs/action-tower-launch/pull/45))
+
 ## [ 2.3.0 ]
 
 - Update Tower CLI to v0.38.0 ([#31](https://github.com/seqeralabs/action-tower-launch/pull/31))
