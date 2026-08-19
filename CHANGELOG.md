@@ -1,8 +1,17 @@
 # seqeralabs/action-tower-launch: Changelog
 
-## [ 2.1.3 ]
+## [ 2.3.1 ]
 
-- Security fix: `tw launch` is no longer run with `-v` by default. Verbose mode logged full HTTP request/response bodies into `tower_action_*.log`. Verbose logging is now opt-in via the new `verbose` input.
+- Stop tolerating Azure failures on CI ([#45](https://github.com/seqeralabs/action-tower-launch/pull/45))
+
+## [ 2.3.0 ]
+
+- Update Tower CLI to v0.38.0 ([#31](https://github.com/seqeralabs/action-tower-launch/pull/31))
+- Rename "Nextflow Tower" to "Seqera Platform" throughout descriptions, outputs and docs; env var names and behaviour are unchanged for backwards compatibility ([#41](https://github.com/seqeralabs/action-tower-launch/pull/41))
+- Security fix: `tw launch` is no longer run with `-v` by default. Verbose mode logged full HTTP request/response bodies into `tower_action_*.log`. Verbose logging is now opt-in via the new `verbose` input ([#39](https://github.com/seqeralabs/action-tower-launch/pull/39))
+- CI: pin GitHub Actions to commit SHAs and fix `zizmor` security findings ([#40](https://github.com/seqeralabs/action-tower-launch/pull/40))
+- CI: don't fail the whole test job when the Azure compute environment is unavailable ([#42](https://github.com/seqeralabs/action-tower-launch/pull/42))
+- chore(deps): pin GitHub Actions dependencies ([#32](https://github.com/seqeralabs/action-tower-launch/pull/32))
 
 ## [ 2.1.2 ]
 
