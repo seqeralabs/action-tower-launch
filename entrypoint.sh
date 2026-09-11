@@ -62,9 +62,6 @@ export workspaceId=$(echo $OUT | base64 -d | jq -r '.workspaceId')
 export workspaceRef=$(echo $OUT | base64 -d | jq -r '.workspaceRef')
 
 # Hide the raw base64 blob from the logs for Github Actions. Not crucial but good practice.
-# The launch details themselves are deliberately not masked: they are not secrets, they are
-# already written to the output JSON file, and masking is global for the rest of the job -
-# which made them render as *** in step summaries and PR comments.
 echo "::add-mask::$OUT"
 
 # We must remove quotes for the URL
