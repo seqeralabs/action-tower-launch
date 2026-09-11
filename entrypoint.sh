@@ -18,7 +18,19 @@ scrub_secrets() {
         sed -i "s|$TOWER_ACCESS_TOKEN|xxxxxx|g" "$f" || true
     done
 }
-trap scrub_secrets EXIT
+
+# `tw` writes its errors to the log file, which is only cat'd on the success path.
+# When the script aborts, print the (scrubbed) log so the reason for the failure is
+# visible in the GitHub Actions log instead of only in the uploaded artifact.
+on_exit() {
+    STATUS=$?
+    scrub_secrets
+    if [ "$STATUS" -ne 0 ] && [ -f "$LOG_FN" ]; then
+        echo "::error::Pipeline launch failed (exit code $STATUS) - Tower CLI log below"
+        cat "$LOG_FN"
+    fi
+}
+trap on_exit EXIT
 
 # Manual curl of service-info
 curl https://api.cloud.seqera.io/service-info >> $LOG_FN
