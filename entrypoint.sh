@@ -61,19 +61,36 @@ export workflowUrl=$(echo $OUT | base64 -d | jq -r '.workflowUrl')
 export workspaceId=$(echo $OUT | base64 -d | jq -r '.workspaceId')
 export workspaceRef=$(echo $OUT | base64 -d | jq -r '.workspaceRef')
 
-# Hide from the logs for Github Actions. Not crucial but good practice.
+# Hide the raw base64 blob from the logs for Github Actions. Not crucial but good practice.
+# The launch details themselves are deliberately not masked: they are not secrets, they are
+# already written to the output JSON file, and masking is global for the rest of the job -
+# which made them render as *** in step summaries and PR comments.
 echo "::add-mask::$OUT"
-echo "::add-mask::$workflowId"
-echo "::add-mask::$workflowUrl"
-echo "::add-mask::$workspaceId"
-echo "::add-mask::$workspaceRef"
+
+# We must remove quotes for the URL
+WORKFLOW_URL=$(echo $workflowUrl | sed 's/"//g')
 
 # Export to Github variables
 echo "workflowId=$workflowId" >> $GITHUB_OUTPUT
-echo "workflowUrl=$(echo $workflowUrl | sed 's/"//g')" >> $GITHUB_OUTPUT # We must remove quotes for the URL
+echo "workflowUrl=$WORKFLOW_URL" >> $GITHUB_OUTPUT
 echo "workspaceId=$workspaceId" >> $GITHUB_OUTPUT
 echo "workspaceRef=$workspaceRef" >> $GITHUB_OUTPUT
 echo "json='$(echo $OUT | base64 -d | jq -rc)'"  >> $GITHUB_OUTPUT
+
+# Make the run easy to find: a clickable link in the job summary and a plain URL in the log
+echo "🚀 Pipeline launched on Seqera Platform: $WORKFLOW_URL"
+if [ -n "${GITHUB_STEP_SUMMARY:-}" ]; then
+    {
+        echo "### 🚀 Pipeline launched on Seqera Platform"
+        echo ""
+        # Keep the run details out of the link text - workspaceRef contains square brackets
+        echo "**[View the run in Seqera Platform]($WORKFLOW_URL)**"
+        echo ""
+        echo "- Workflow ID: \`$workflowId\`"
+        echo "- Workspace: \`$workspaceRef\`"
+        echo ""
+    } >> "$GITHUB_STEP_SUMMARY"
+fi
 
 # Create output json file
 echo $OUT | base64 -d > $LOG_JSON

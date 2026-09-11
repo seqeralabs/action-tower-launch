@@ -2,6 +2,8 @@
 
 ## [ Unreleased ]
 
+- Stop masking the `workflowId`, `workflowUrl`, `workspaceId` and `workspaceRef` outputs in the GitHub Actions log. They are not secrets, and masking is global for the rest of the job, so a link to the Seqera Platform run rendered as `***` in job summaries and PR comments ([#48](https://github.com/seqeralabs/action-tower-launch/issues/48))
+- Write a clickable link to the launched run into the GitHub Actions job summary, and print the run URL in the step log ([#48](https://github.com/seqeralabs/action-tower-launch/issues/48))
 - Security fix: always strip `TOWER_ACCESS_TOKEN` from `tower_action_*.log`/`.json`. Scrubbing now runs from an `EXIT` trap, so it also happens when `tw launch` fails and the script aborts early
 
 ## [ 2.3.1 ]
