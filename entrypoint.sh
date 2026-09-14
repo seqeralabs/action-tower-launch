@@ -7,7 +7,9 @@ echo "::add-mask::$TOWER_API_ENDPOINT"
 echo "::add-mask::$TOWER_ACCESS_TOKEN"
 echo "::add-mask::$TOWER_COMPUTE_ENV"
 
-LOG_FN=tower_action_$(date +'%Y_%m_%d-%H_%M').log
+# Unique per launch: all steps in a job share /github/workspace, so a name that
+# collides makes one step's log (and error dump) include the others'.
+LOG_FN="tower_action_$(date +'%Y_%m_%d-%H_%M')_$(uuidgen).log"
 LOG_JSON="tower_action_"$(uuidgen)".json"
 
 # EXIT trap so the scrub also runs when `tw launch` fails and `set -e` aborts.

@@ -24,7 +24,7 @@ jobs:
   run-tower:
     runs-on: ubuntu-latest
     steps:
-      - uses: seqeralabs/action-tower-launch@v1
+      - uses: seqeralabs/action-tower-launch@v2
         # Use repository secrets for sensitive fields
         with:
           access_token: ${{ secrets.TOWER_ACCESS_TOKEN }}
@@ -53,7 +53,7 @@ jobs:
     if: github.repository == 'YOUR_USERNAME/REPO'
     runs-on: ubuntu-latest
     steps:
-      - uses: seqeralabs/action-tower-launch@v1
+      - uses: seqeralabs/action-tower-launch@v2
         # Use repository secrets for sensitive fields
         with:
           workspace_id: ${{ secrets.TOWER_WORKSPACE_ID }}
@@ -182,7 +182,7 @@ Useful to pass custom Nextflow config options to the `tw launch` command e.g.
 jobs:
   run-tower:
     steps:
-      - uses: seqeralabs/action-tower-launch@v1
+      - uses: seqeralabs/action-tower-launch@v2
         with:
           nextflow_config: |
             process.errorStrategy = 'retry'
@@ -200,7 +200,7 @@ Pre-run script executed before pipeline launch. This would be particularly usefu
 jobs:
   run-tower:
     steps:
-      - uses: seqeralabs/action-tower-launch@v1
+      - uses: seqeralabs/action-tower-launch@v2
         with:
           pre_run_script: "export NXF_VER=21.10.3"
           # Truncated..
@@ -291,7 +291,7 @@ jobs:
       workflow_id: ${{ steps.run.outputs.workflowId }}
       workspace_id: ${{ steps.run.outputs.workspaceId }}
     steps:
-      - uses: seqeralabs/action-tower-launch@v1
+      - uses: seqeralabs/action-tower-launch@v2
         with:
           access_token: ${{ secrets.TOWER_ACCESS_TOKEN }}
 

@@ -1,16 +1,12 @@
 # seqeralabs/action-tower-launch: Changelog
 
-## [ Unreleased ]
+## [ 2.4.0 ]
 
 - Stop masking the `workflowId`, `workflowUrl`, `workspaceId` and `workspaceRef` outputs in the GitHub Actions log. They are not secrets, and masking is global for the rest of the job, so a link to the Seqera Platform run rendered as `***` in job summaries and PR comments ([#48](https://github.com/seqeralabs/action-tower-launch/issues/48))
 - Write a clickable link to the launched run into the GitHub Actions job summary, and print the run URL in the step log ([#48](https://github.com/seqeralabs/action-tower-launch/issues/48))
-- CI: don't fail the whole test job when the Azure compute environment is unavailable, reapplying ([#42](https://github.com/seqeralabs/action-tower-launch/pull/42)) after it was reverted in [#45](https://github.com/seqeralabs/action-tower-launch/pull/45)
 - Print the (scrubbed) Tower CLI log with a `::error::` annotation when a launch fails, so the reason is visible in the GitHub Actions log rather than only in the uploaded artifact
 - Security fix: always strip `TOWER_ACCESS_TOKEN` from `tower_action_*.log`/`.json`. Scrubbing now runs from an `EXIT` trap, so it also happens when `tw launch` fails and the script aborts early
-
-## [ 2.3.1 ]
-
-- Stop tolerating Azure failures on CI ([#45](https://github.com/seqeralabs/action-tower-launch/pull/45))
+- Fix: give `tower_action_*.log` a unique name per launch. The name was previously only minute-resolution, so several launches in one job shared a log file via `/github/workspace` and one step's error dump included the other steps' output
 
 ## [ 2.3.0 ]
 
