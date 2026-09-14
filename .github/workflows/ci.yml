@@ -33,6 +33,7 @@ jobs:
 
       - uses: ./
         id: aws_run
+        continue-on-error: true
         # Use repository secrets for sensitive fields
         with:
           access_token: ${{ secrets.TOWER_ACCESS_TOKEN }}
@@ -58,6 +59,7 @@ jobs:
 
       - uses: ./
         id: gcp_run
+        continue-on-error: true
         # Use repository secrets for sensitive fields
         with:
           access_token: ${{ secrets.TOWER_ACCESS_TOKEN }}
@@ -69,37 +71,19 @@ jobs:
           api_endpoint: ${{ secrets.PLATFORM_ENDPOINT }}
 
       - name: Comment PR
-        if: github.event_name == 'pull_request'
+        if: always() && github.event_name == 'pull_request'
         uses: thollander/actions-comment-pull-request@24bffb9b452ba05a4f3f77933840a6a841d1b32b # v3.0.1
         with:
           message: |
             ### 🚀 Pipelines launched
 
-            | Name | Info |
-            |------|------|
-            | 🔨 AWS Workflow ID | `${{ steps.aws_run.outputs.workflowId }}` |
-            | 🏠 AWS Workspace | `${{ steps.aws_run.outputs.workspaceRef }}` |
-            | 🗂️ AWS Workspace ID | `${{ steps.aws_run.outputs.workspaceId }}` |
-            | 😎 AWS Workflow URL | ${{ steps.aws_run.outputs.workflowUrl }} |
-            | ⚠️ Azure Status | ${{ steps.azure_run.outcome == 'success' && '✅ Launched' || '❌ Failed — known Azure compute-env issue, non-blocking' }} |
-            | 🔨 Azure Workflow ID | `${{ steps.azure_run.outcome == 'success' && steps.azure_run.outputs.workflowId || '—' }}` |
-            | 🏠 Azure Workspace | `${{ steps.azure_run.outcome == 'success' && steps.azure_run.outputs.workspaceRef || '—' }}` |
-            | 🗂️ Azure Workspace ID | `${{ steps.azure_run.outcome == 'success' && steps.azure_run.outputs.workspaceId || '—' }}` |
-            | 😎 Azure Workflow URL | ${{ steps.azure_run.outcome == 'success' && steps.azure_run.outputs.workflowUrl || '—' }} |
-            | 🔨 GCP Workflow ID | `${{ steps.gcp_run.outputs.workflowId }}` |
-            | 🏠 GCP Workspace | `${{ steps.gcp_run.outputs.workspaceRef }}` |
-            | 🗂️ GCP Workspace ID | `${{ steps.gcp_run.outputs.workspaceId }}` |
-            | 😎 GCP Workflow URL | ${{ steps.gcp_run.outputs.workflowUrl }} |
-          comment-tag: towerrun
+            Launch failures are reported here but do not block CI. The Tower CLI log is uploaded as an artifact.
 
-      - name: Comment PR
-        uses: thollander/actions-comment-pull-request@24bffb9b452ba05a4f3f77933840a6a841d1b32b # v3.0.1
-        if: failure() && github.event_name == 'pull_request'
-        with:
-          message: |
-            ### :x: Pipeline launch failed
-
-            The pipeline launch failed. Check the logs uploaded as an artifact for more information.
+            | Cloud | Status | Workflow ID | Workspace | Run |
+            |-------|--------|-------------|-----------|-----|
+            | AWS | ${{ steps.aws_run.outcome == 'success' && '✅ Launched' || '❌ Failed' }} | `${{ steps.aws_run.outputs.workflowId || '—' }}` | `${{ steps.aws_run.outputs.workspaceRef || '—' }}` | ${{ steps.aws_run.outputs.workflowUrl || '—' }} |
+            | Azure | ${{ steps.azure_run.outcome == 'success' && '✅ Launched' || '❌ Failed' }} | `${{ steps.azure_run.outputs.workflowId || '—' }}` | `${{ steps.azure_run.outputs.workspaceRef || '—' }}` | ${{ steps.azure_run.outputs.workflowUrl || '—' }} |
+            | GCP | ${{ steps.gcp_run.outcome == 'success' && '✅ Launched' || '❌ Failed' }} | `${{ steps.gcp_run.outputs.workflowId || '—' }}` | `${{ steps.gcp_run.outputs.workspaceRef || '—' }}` | ${{ steps.gcp_run.outputs.workflowUrl || '—' }} |
           comment-tag: towerrun
 
       - uses: ./
