@@ -7,7 +7,6 @@
 - Print the (scrubbed) Tower CLI log with a `::error::` annotation when a launch fails, so the reason is visible in the GitHub Actions log rather than only in the uploaded artifact
 - Security fix: always strip `TOWER_ACCESS_TOKEN` from `tower_action_*.log`/`.json`. Scrubbing now runs from an `EXIT` trap, so it also happens when `tw launch` fails and the script aborts early
 - Fix: give `tower_action_*.log` a unique name per launch. The name was previously only minute-resolution, so several launches in one job shared a log file via `/github/workspace` and one step's error dump included the other steps' output
-- CI: don't fail the test job when a launch fails on any cloud. AWS and GCP are now tolerated like Azure, and the PR comment reports per-cloud status instead of special-casing Azure
 
 ## [ 2.3.0 ]
 
