@@ -2,6 +2,7 @@
 
 ## [ 2.4.0 ]
 
+- Update Tower CLI to v0.40.0
 - Stop masking the `workflowId`, `workflowUrl`, `workspaceId` and `workspaceRef` outputs in the GitHub Actions log. They are not secrets, and masking is global for the rest of the job, so a link to the Seqera Platform run rendered as `***` in job summaries and PR comments ([#48](https://github.com/seqeralabs/action-tower-launch/issues/48))
 - Write a clickable link to the launched run into the GitHub Actions job summary, and print the run URL in the step log ([#48](https://github.com/seqeralabs/action-tower-launch/issues/48))
 - Print the (scrubbed) Tower CLI log with a `::error::` annotation when a launch fails, so the reason is visible in the GitHub Actions log rather than only in the uploaded artifact
