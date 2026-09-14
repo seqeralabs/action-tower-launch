@@ -243,6 +243,13 @@ jobs:
 
 ## Outputs
 
+### Job summary link
+
+The action writes a link to the launched run into the GitHub Actions [job summary](https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#adding-a-job-summary), so you can click straight through from the workflow run page to Seqera Platform without adding any steps to your workflow. The same URL is also printed in the step log.
+
+> [!NOTE]
+> If you set `wait`, the link only appears once `tw launch` returns, which is when the pipeline finishes.
+
 ### Output variables
 
 The action creates the output variable `json` which is a JSON string of metadata created by the Seqera Platform API. It looks like this and can be parsed using the built in `fromJSON()` method.
@@ -262,6 +269,8 @@ In addition, each variable is available as a separate output available under the
 - `workflowUrl`
 - `workspaceId`
 - `workspaceRef`
+
+These values are not secrets and are not masked, so you can print them in job summaries, PR comments and logs. Note that `workspaceId` still appears as `***` if you pass it in as the `workspace_id` input from a GitHub Actions secret, since GitHub masks secrets itself.
 
 From the example above, we can now extend it to use the output variables in downstream steps and jobs. In this example we use the output variables twice:
 

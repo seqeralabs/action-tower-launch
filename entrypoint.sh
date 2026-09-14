@@ -18,7 +18,19 @@ scrub_secrets() {
         sed -i "s|$TOWER_ACCESS_TOKEN|xxxxxx|g" "$f" || true
     done
 }
-trap scrub_secrets EXIT
+
+# `tw` writes its errors to the log file, which is only cat'd on the success path.
+# When the script aborts, print the (scrubbed) log so the reason for the failure is
+# visible in the GitHub Actions log instead of only in the uploaded artifact.
+on_exit() {
+    STATUS=$?
+    scrub_secrets
+    if [ "$STATUS" -ne 0 ] && [ -f "$LOG_FN" ]; then
+        echo "::error::Pipeline launch failed (exit code $STATUS) - Tower CLI log below"
+        cat "$LOG_FN"
+    fi
+}
+trap on_exit EXIT
 
 # Manual curl of service-info
 curl https://api.cloud.seqera.io/service-info >> $LOG_FN
@@ -61,19 +73,33 @@ export workflowUrl=$(echo $OUT | base64 -d | jq -r '.workflowUrl')
 export workspaceId=$(echo $OUT | base64 -d | jq -r '.workspaceId')
 export workspaceRef=$(echo $OUT | base64 -d | jq -r '.workspaceRef')
 
-# Hide from the logs for Github Actions. Not crucial but good practice.
+# Hide the raw base64 blob from the logs for Github Actions. Not crucial but good practice.
 echo "::add-mask::$OUT"
-echo "::add-mask::$workflowId"
-echo "::add-mask::$workflowUrl"
-echo "::add-mask::$workspaceId"
-echo "::add-mask::$workspaceRef"
+
+# We must remove quotes for the URL
+WORKFLOW_URL=$(echo $workflowUrl | sed 's/"//g')
 
 # Export to Github variables
 echo "workflowId=$workflowId" >> $GITHUB_OUTPUT
-echo "workflowUrl=$(echo $workflowUrl | sed 's/"//g')" >> $GITHUB_OUTPUT # We must remove quotes for the URL
+echo "workflowUrl=$WORKFLOW_URL" >> $GITHUB_OUTPUT
 echo "workspaceId=$workspaceId" >> $GITHUB_OUTPUT
 echo "workspaceRef=$workspaceRef" >> $GITHUB_OUTPUT
 echo "json='$(echo $OUT | base64 -d | jq -rc)'"  >> $GITHUB_OUTPUT
+
+# Make the run easy to find: a clickable link in the job summary and a plain URL in the log
+echo "🚀 Pipeline launched on Seqera Platform: $WORKFLOW_URL"
+if [ -n "${GITHUB_STEP_SUMMARY:-}" ]; then
+    {
+        echo "### 🚀 Pipeline launched on Seqera Platform"
+        echo ""
+        # Keep the run details out of the link text - workspaceRef contains square brackets
+        echo "**[View the run in Seqera Platform]($WORKFLOW_URL)**"
+        echo ""
+        echo "- Workflow ID: \`$workflowId\`"
+        echo "- Workspace: \`$workspaceRef\`"
+        echo ""
+    } >> "$GITHUB_STEP_SUMMARY"
+fi
 
 # Create output json file
 echo $OUT | base64 -d > $LOG_JSON

@@ -45,6 +45,7 @@ jobs:
 
       - uses: ./
         id: azure_run
+        continue-on-error: true
         # Use repository secrets for sensitive fields
         with:
           access_token: ${{ secrets.TOWER_ACCESS_TOKEN }}
@@ -80,10 +81,11 @@ jobs:
             | 🏠 AWS Workspace | `${{ steps.aws_run.outputs.workspaceRef }}` |
             | 🗂️ AWS Workspace ID | `${{ steps.aws_run.outputs.workspaceId }}` |
             | 😎 AWS Workflow URL | ${{ steps.aws_run.outputs.workflowUrl }} |
-            | 🔨 Azure Workflow ID | `${{ steps.azure_run.outputs.workflowId }}` |
-            | 🏠 Azure Workspace | `${{ steps.azure_run.outputs.workspaceRef }}` |
-            | 🗂️ Azure Workspace ID | `${{ steps.azure_run.outputs.workspaceId }}` |
-            | 😎 Azure Workflow URL | ${{ steps.gcp_run.outputs.workflowUrl }} |
+            | ⚠️ Azure Status | ${{ steps.azure_run.outcome == 'success' && '✅ Launched' || '❌ Failed — known Azure compute-env issue, non-blocking' }} |
+            | 🔨 Azure Workflow ID | `${{ steps.azure_run.outcome == 'success' && steps.azure_run.outputs.workflowId || '—' }}` |
+            | 🏠 Azure Workspace | `${{ steps.azure_run.outcome == 'success' && steps.azure_run.outputs.workspaceRef || '—' }}` |
+            | 🗂️ Azure Workspace ID | `${{ steps.azure_run.outcome == 'success' && steps.azure_run.outputs.workspaceId || '—' }}` |
+            | 😎 Azure Workflow URL | ${{ steps.azure_run.outcome == 'success' && steps.azure_run.outputs.workflowUrl || '—' }} |
             | 🔨 GCP Workflow ID | `${{ steps.gcp_run.outputs.workflowId }}` |
             | 🏠 GCP Workspace | `${{ steps.gcp_run.outputs.workspaceRef }}` |
             | 🗂️ GCP Workspace ID | `${{ steps.gcp_run.outputs.workspaceId }}` |
