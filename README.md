@@ -1,3 +1,7 @@
+> [!CAUTION]
+> DO NOT USE THIS REPO
+> Use https://github.com/seqeralabs/action-seqera-launch/ instead
+
 # seqeralabs/action-tower-launch
 
 **A GitHub Action to launch a workflow using [Seqera Platform](https://cloud.seqera.io) - <https://cloud.seqera.io>.**
