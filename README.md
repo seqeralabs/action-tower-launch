@@ -1,4 +1,4 @@
-> [!WARNING]
+> [!CAUTION]
 > DO NOT USE THIS REPO
 > Use https://github.com/seqeralabs/action-seqera-launch/ instead
 
